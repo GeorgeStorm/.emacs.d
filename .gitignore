@@ -1,0 +1,16 @@
+
+auto-save-list/
+
+backups/
+
+elpa/
+
+\.emacs\.desktop
+
+\.emacs\.desktop\.lock
+
+bookmarks
+
+init\.el\.old
+
+recentf
