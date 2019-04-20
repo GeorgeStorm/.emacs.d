@@ -51,7 +51,7 @@
 (use-package pdf-tools
   :defer 1
   :magic ("%PDF" . pdf-view-mode)
-  :init (pdf-tools-install :no-query))
+  :config (pdf-tools-install :no-query))
 
 (use-package pdf-view
   :ensure nil

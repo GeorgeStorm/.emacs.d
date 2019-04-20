@@ -11,17 +11,22 @@
 
 	;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
 	;; may have their own settings.
-	(load-theme 'doom-dracula t)
+	(load-theme 'doom-vibrant t)
 
 	;; Enable flashing mode-line on errors
 	(doom-themes-visual-bell-config)
 
 	;; Enable custom neotree theme (all-the-icons must be installed!)
 	(doom-themes-neotree-config)
-	;; or for treemacs users
-	(doom-themes-treemacs-config)
 
 	;; Corrects (and improves) org-mode's native fontification.
 	(doom-themes-org-config))
+
+(use-package solaire-mode
+  :hook
+  ((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
+  (minibuffer-setup . solaire-mode-in-minibuffer)
+  :config
+  (solaire-mode-swap-bg))
 
 (provide 'init-doom)
