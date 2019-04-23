@@ -168,7 +168,7 @@
  '(dashboard-startup-banner (quote logo) t)
  '(package-selected-packages
    (quote
-    (solaire-mode solarized-theme htmlize doom-modeline neotree smartparens which-key company flycheck counsel ivy all-the-icons use-package)))
+    (omnisharp solaire-mode solarized-theme htmlize doom-modeline neotree smartparens which-key company flycheck counsel ivy all-the-icons use-package)))
  '(pdf-view-display-size (quote fit-page))
  '(pdf-view-resize-factor 1.1)
  '(pdf-view-use-unicode-ligther nil)
@@ -205,6 +205,12 @@
 (require 'init-remap)
 ;; Helps with finding inbuilt functions/key combos (chords?)
 (require 'init-which-key)
+;; Project management
+(require 'init-projectile)
+;; GIT in emacs
+(require 'init-magit)
+;; C# in emacs?
+(require 'init-omnisharp)
 
 ;; Theme
 (require 'init-doom)
