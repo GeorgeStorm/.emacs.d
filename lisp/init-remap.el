@@ -1,3 +1,11 @@
+;;; init-remap.el --- Key and behaviour remapping
+
+;;; Commentary:
+;;; Change C-scroll to zoom in and out like Windows
+;;; Add undo-tree
+
+;;; Code:
+
 ;; scrolling behavior
 (setq mouse-wheel-scroll-amount '(5 ((shift) . 1))) ; one line at a time
 (setq mouse-wheel-progressive-speed nil) ; don't accelerate scrolling
@@ -47,3 +55,5 @@
 (global-set-key (kbd "<C-next>") 'end-of-buffer)
 
 (provide 'init-remap)
+
+;;; init-remap.el ends here

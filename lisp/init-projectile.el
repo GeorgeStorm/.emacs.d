@@ -1,3 +1,9 @@
+;;; init-projectile.el --- Project management
+
+;;; Commentary:
+
+;;; Code:
+
 (use-package projectile
   :ensure t
   :config
@@ -6,3 +12,5 @@
   (projectile-mode +1))
 
 (provide 'init-projectile)
+
+;;; init-projectile.el ends here

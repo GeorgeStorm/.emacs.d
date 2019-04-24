@@ -1,3 +1,9 @@
+;;; init-ledger.el --- Money management
+
+;;; Commentary:
+
+;;; Code:
+
 (use-package ledger-mode
   :mode "\\.dat\\'"
   :init
@@ -48,3 +54,5 @@
   (add-hook 'ledger-mode-hook 'flycheck-mode))
 
 (provide 'init-ledger)
+
+;;; init-ledger.el ends here

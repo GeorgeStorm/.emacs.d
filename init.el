@@ -5,30 +5,56 @@
 
 ;;; Code:
 
+;; Starting emacs server
+(setq server-auth-dir
+      (let ((dir (concat user-emacs-directory
+                         "server_" (format "%s_%s"
+                                           emacs-major-version
+                                           emacs-minor-version)
+                         "_" (system-name) ; Use the var `system-name' directly
+                                        ; if using emacs older than 25.1.
+                         "/")))
+        (make-directory dir :parents)
+        dir))
+
+(require 'server)
+;; Start a server if (server-running-p) does not return t (e.g. if it
+;; returns nil or :other)
+(or (eq (server-running-p) t)
+    (server-start))
+(when (equal window-system 'w32)
+  (setq server-use-tcp t))
+
+(with-eval-after-load 'server
+  (when (equal window-system 'w32)
+    ;; Suppress error "directory  ~/.emacs.d/server is unsafe". It is needed
+    ;; needed for the server to start on Windows.
+    (defun server-ensure-safe-dir (dir) "Noop" t)))
+
 ;; Speed up startup
-(defvar default-file-name-handler-alist file-name-handler-alist)
-(setq file-name-handler-alist nil)
-(setq gc-cons-threshold 80000000)
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            "Restore defalut values after init."
-            (setq file-name-handler-alist default-file-name-handler-alist)
-            (setq gc-cons-threshold 800000)
-            (if (boundp 'after-focus-change-function)
-                (add-function :after after-focus-change-function
-                              (lambda ()
-                                (unless (frame-focus-state)
+ (defvar default-file-name-handler-alist file-name-handler-alist)
+ (setq file-name-handler-alist nil)
+ (setq gc-cons-threshold 80000000)
+ (add-hook 'emacs-startup-hook
+           (lambda ()
+             "Restore defalut values after init."
+             (setq file-name-handler-alist default-file-name-handler-alist)
+             (setq gc-cons-threshold 800000)
+             (if (boundp 'after-focus-change-function)
+                 (add-function :after after-focus-change-function
+                               (lambda ()
+                                 (unless (frame-focus-state)
                                   (garbage-collect))))
-              (add-hook 'focus-out-hook 'garbage-collect))))
+               (add-hook 'focus-out-hook 'garbage-collect))))
 
-;; Load path
-;; Optimize: Force "lisp"" at the head to reduce the startup time.
-(defun update-load-path (&rest _)
+;; ;; Load path
+;; ;; Optimize: Force "lisp"" at the head to reduce the startup time.
+ (defun update-load-path (&rest _)
 
-  "Update `load-path'."
-  (push (expand-file-name "lisp" user-emacs-directory) load-path))
+   "Update `load-path'."
+   (push (expand-file-name "lisp" user-emacs-directory) load-path))
 
-(advice-add #'package-initialize :after #'update-load-path)
+ (advice-add #'package-initialize :after #'update-load-path)
 
 
 ;; use-package setup
@@ -105,34 +131,13 @@
   '(("[*]Warnings[*]" .
      (display-buffer-in-side-window . '((side . bottom))))))
 
-;; DASHBOARD
-(use-package dashboard
-  :if (< (length command-line-args) 2)
-  :preface
-  (defun my/dashboard-banner ()
-    "Sets a dashboard banner including information on package initialization
-     time and garbage collections."
-    (setq dashboard-banner-logo-title
-          (format "Emacs ready in %.2f seconds with %d garbage collections."
-                  (float-time
-                   (time-subtract after-init-time before-init-time)) gcs-done)))
-  (setq dashboard-items '((recents  . 10)))
-  :init
-  (add-hook 'after-init-hook 'dashboard-refresh-buffer)
-  (add-hook 'dashboard-mode-hook 'my/dashboard-banner)
-  :custom (dashboard-startup-banner 'logo)
-  :config (dashboard-setup-startup-hook))
-
-
 ;; Save scratch (notepad++ empty file replacement)
 (defun save-persistent-scratch ()
-  "Save the contents of *scratch*"
        (with-current-buffer (get-buffer-create "*scratch*")
          (write-region (point-min) (point-max)
                        (concat user-emacs-directory "scratch"))))
 
 (defun load-persistent-scratch ()
-  "Reload the scratch buffer"
   (let ((scratch-file (concat user-emacs-directory "scratch")))
     (if (file-exists-p scratch-file)
         (with-current-buffer (get-buffer "*scratch*")
@@ -185,6 +190,8 @@
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 ;; Autocomplete
 (require 'init-company)
+;; Startup dashboard
+(require 'init-dashboard)
 ;; Syntax checking
 (require 'init-flycheck)
 ;; Spell checking
@@ -195,22 +202,22 @@
 (require 'init-latex)
 ;; Ledger mode
 (require 'init-ledger)
+;; GIT in emacs
+(require 'init-magit)
 ;; File explorer
 (require 'init-neotree)
+;; C# in emacs?
+(require 'init-omnisharp)
 ;; Org mode
 (require 'init-org)
+;; Project management
+(require 'init-projectile)
 ;; Rainbow delimiters and smartparens
 (require 'init-smartparens)
 ;; Changes ctrl-z to undo, uses undo-tree, adds ctrl-mousewheel to zoom in/out
 (require 'init-remap)
 ;; Helps with finding inbuilt functions/key combos (chords?)
 (require 'init-which-key)
-;; Project management
-(require 'init-projectile)
-;; GIT in emacs
-(require 'init-magit)
-;; C# in emacs?
-(require 'init-omnisharp)
 
 ;; Theme
 (require 'init-doom)

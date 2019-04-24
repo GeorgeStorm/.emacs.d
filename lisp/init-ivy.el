@@ -1,4 +1,6 @@
-;;; #init-ivy.el
+;;; init-ivy.el --- Command completion
+
+;;; Commentary:
 
 ;;; Code:
 (use-package ivy
@@ -29,4 +31,5 @@
    ("C-c C-r" . ivy-resume)))     ; Resume last Ivy-based completion
    
 (provide 'init-ivy)
-;;; init-ivy.el ends here.
+
+;;; init-ivy.el ends here

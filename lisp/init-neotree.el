@@ -1,6 +1,9 @@
-;;; lisp/init-neotree.el
+;;; init-neotree.el --- File browser
+
+;;; Commentary:
 
 ;;; Code:
+
 (use-package neotree
   :init
   (require 'neotree)
@@ -10,3 +13,5 @@
   )
 (global-set-key [f8] 'neotree-toggle)
 (provide 'init-neotree)
+
+;;; init-neotree.el ends here

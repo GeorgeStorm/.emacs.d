@@ -1,6 +1,9 @@
-;;; lisp/init-which-key.el
+;;; init-which-key.el --- Function help
+
+;;;Commentary:
 
 ;;; Code:
+
 (use-package which-key
   :init
   (which-key-mode)
@@ -12,3 +15,5 @@
   :diminish which-key-mode)
 
 (provide 'init-which-key)
+
+;;; init-which-key.el ends here

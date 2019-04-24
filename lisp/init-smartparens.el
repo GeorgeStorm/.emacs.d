@@ -1,6 +1,9 @@
-;;; lisp/init-smartparens.el
+;;; init-smartparens.el --- Highlights matching parentheses
+
+;;; Commentary:
 
 ;;; Code:
+
 (use-package smartparens
   :defer 1
   :delight
@@ -19,3 +22,5 @@
   (set-face-foreground 'show-paren-match "#ffffff"))
 
 (provide 'init-smartparens)
+
+;;; init-smartparens.el ends here

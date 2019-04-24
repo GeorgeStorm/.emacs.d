@@ -29,4 +29,5 @@
   (progn
     (setq elpy-rpc-backend "jedi")))
 (provide 'init-python)
+
 ;;; init-python.el ends here

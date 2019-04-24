@@ -1,5 +1,11 @@
-;;; AucTeX config
+;;; init-latex.el --- Latex setup
 
+;;; Commentary:
+;;; AucTex, RefTex, BibTex, PDF-Tools setup
+
+;;; Code:
+
+;;; AucTeX config
 (use-package tex
   :ensure auctex
   :bind (:map TeX-mode-map
@@ -67,3 +73,5 @@
   (pdf-view-use-unicode-ligther nil))
   
 (provide 'init-latex)
+
+;;; init-latex.el ends here

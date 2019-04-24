@@ -1,3 +1,9 @@
+;;; init-doom.el --- Doom modeline and theme
+
+;;; Commentary:
+
+;;; Code:
+
 (use-package doom-modeline
       :ensure t
       :hook (after-init . doom-modeline-mode))
@@ -30,3 +36,5 @@
   (solaire-mode-swap-bg))
 
 (provide 'init-doom)
+
+;;; init-doom.el ends here
