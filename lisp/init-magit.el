@@ -6,7 +6,8 @@
 ;;; Code:
 
 (use-package magit
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (provide 'init-magit)
 

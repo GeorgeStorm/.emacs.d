@@ -5,8 +5,13 @@
 ;;; Code:
 
 (use-package doom-modeline
-      :ensure t
-      :hook (after-init . doom-modeline-mode))
+  :ensure t
+  :hook
+  (after-init . doom-modeline-init)
+  :custom
+  (doom-modeline-major-mode-icon t)
+  (doom-modeline-buffer-file-name-style 'buffer-name)
+  (doom-modeline-icon t))
 	  
 (use-package doom-themes
 	:config

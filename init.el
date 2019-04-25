@@ -1,25 +1,22 @@
-;;; init.el --- George's 1st emacs config
+;;; init.el --- George's first Emacs config
 
 ;;; Commentary:
 ;; File containing my first attempt at an Emacs config from scratch
 
 ;;; Code:
 
-;; Starting emacs server
+;; Starting emacs server if one not already running
 (setq server-auth-dir
       (let ((dir (concat user-emacs-directory
                          "server_" (format "%s_%s"
                                            emacs-major-version
                                            emacs-minor-version)
-                         "_" (system-name) ; Use the var `system-name' directly
-                                        ; if using emacs older than 25.1.
+                         "_" (system-name)
                          "/")))
         (make-directory dir :parents)
         dir))
 
 (require 'server)
-;; Start a server if (server-running-p) does not return t (e.g. if it
-;; returns nil or :other)
 (or (eq (server-running-p) t)
     (server-start))
 (when (equal window-system 'w32)
@@ -27,59 +24,50 @@
 
 (with-eval-after-load 'server
   (when (equal window-system 'w32)
-    ;; Suppress error "directory  ~/.emacs.d/server is unsafe". It is needed
-    ;; needed for the server to start on Windows.
     (defun server-ensure-safe-dir (dir) "Noop" t)))
 
 ;; Speed up startup
- (defvar default-file-name-handler-alist file-name-handler-alist)
- (setq file-name-handler-alist nil)
- (setq gc-cons-threshold 80000000)
- (add-hook 'emacs-startup-hook
-           (lambda ()
-             "Restore defalut values after init."
-             (setq file-name-handler-alist default-file-name-handler-alist)
-             (setq gc-cons-threshold 800000)
-             (if (boundp 'after-focus-change-function)
-                 (add-function :after after-focus-change-function
-                               (lambda ()
-                                 (unless (frame-focus-state)
-                                  (garbage-collect))))
-               (add-hook 'focus-out-hook 'garbage-collect))))
-
-;; ;; Load path
-;; ;; Optimize: Force "lisp"" at the head to reduce the startup time.
- (defun update-load-path (&rest _)
-
-   "Update `load-path'."
-   (push (expand-file-name "lisp" user-emacs-directory) load-path))
-
- (advice-add #'package-initialize :after #'update-load-path)
-
+(setq gc-cons-threshold 402653184
+      gc-cons-percentage 0.6)
+(add-hook 'after-init-hook
+          `(lambda ()
+             (setq gc-cons-threshold 800000
+                   gc-cons-percentage 0.1)
+             (garbage-collect)) t)
 
 ;; use-package setup
 (require 'cl)
 (require 'package)
 (setq package-archives
-      '(("org" . "http://orgmode.org/elpa/")
+      `(,@package-archives
+        ("org" . "http://orgmode.org/elpa/")
          ("gnu" . "https://elpa.gnu.org/packages/")
-     ("MELPA" . "https://melpa.org/packages/"))
- package-enable-at-startup nil)
+     ("MELPA" . "https://melpa.org/packages/")))
 (package-initialize)
+(setq-default use-package-always-ensure t ;; Auto download if needed
+              use-package-verbose nil ;; Don't report loading details
+              use-package-expand-minimally t ;; Make the expanded code as minimal as possible
+              )
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
 (eval-when-compile
   (require 'use-package))
-(require 'bind-key)
 
-;; Always download if not available
-(setq use-package-always-ensure t)
+;; Allows for the tweaking of startup
+(use-package benchmark-init
+  :ensure t
+  :config
+  ;; To disable collection of benchmark data after init is done.
+  (add-hook 'after-init-hook 'benchmark-init/deactivate))
+
+(use-package bind-key
+  :ensure t)
 
 (setq delete-old-versions -1  ; delete excess backups silently
-      version-control t
-      vc-make-backup-files t
-      vc-follow-symlinks t
+      ;;version-control t
+      ;;vc-make-backup-files t
+      ;;vc-follow-symlinks t
       doc-view-continuous t ; At page edge goto next/previous.
       echo-keystrokes 0.1
       backup-directory-alist `(("." . "~/.emacs.d/backups"))
@@ -94,6 +82,7 @@
 
 (setq-default fill-column 100                        ; Maximum line width.
               indent-tabs-mode nil                   ; Use spaces instead of tabs.
+              tab-width 2
               auto-fill-function nil)                ; Auto fill is annoying
 
 (dolist (mode
@@ -107,6 +96,11 @@
   (eval-after-load 'auto-compile
     '((auto-compile-on-save-mode 1))))  ; compile .el files on save.
 
+;; Better defaults
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(menu-bar-mode -1)
+(tooltip-mode -1)
 (fset 'yes-or-no-p 'y-or-n-p)
 (global-display-line-numbers-mode t )
 (desktop-save-mode 1)
@@ -119,19 +113,20 @@
       recentf-max-menu-items 15)
 (recentf-mode)
 
-(use-package better-defaults)
-(scroll-bar-mode 1)
-
 (use-package smart-mode-line)
-(use-package all-the-icons)
-(use-package htmlize)
+(use-package all-the-icons
+  :ensure t
+  :defer t)
+;; Allows export of orgmode files to html
+(use-package htmlize
+  :defer t)
 
 ;; show warnings in a small window
 (setq display-buffer-alist
   '(("[*]Warnings[*]" .
      (display-buffer-in-side-window . '((side . bottom))))))
 
-;; Save scratch (notepad++ empty file replacement)
+;; Save scratch file (notepad++ empty file replacement)
 (defun save-persistent-scratch ()
        (with-current-buffer (get-buffer-create "*scratch*")
          (write-region (point-min) (point-max)
@@ -149,13 +144,11 @@
 
 (run-with-idle-timer 300 t 'save-persistent-scratch)
 
-
 ;; Compilation flags
 (setq-default
  compilation-auto-jump-to-first-error t    ; Take me to the first error
  compilation-always-kill t                 ; Restart compilation without prompt
  compilation-scroll-output 'first-error)   ; Follow compilation buffer until we hit an error
-
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -170,15 +163,31 @@
  '(TeX-parse-self t t)
  '(TeX-source-correlate-mode t t)
  '(TeX-view-program-selection (quote ((output-pdf "PDF Tools"))) t)
+ '(add-hook (quote prog-mode-hook) t)
  '(dashboard-startup-banner (quote logo) t)
+ '(doom-modeline-buffer-file-name-style (quote buffer-name) t)
+ '(doom-modeline-icon t t)
+ '(doom-modeline-major-mode-icon t t)
+ '(face-font-family-alternatives (quote (("Consolas" "Monaco" "Monospace"))))
+ '(flyspell-delay 1 t)
+ '(ispell-dictionary "en_GB" t)
+ '(ispell-encoding8-command t t)
+ '(ispell-program-name "hunspell" t)
+ '(ispell-really-aspell nil t)
+ '(ispell-really-hunspell t t)
+ '(ispell-silently-savep t t)
  '(package-selected-packages
    (quote
     (omnisharp solaire-mode solarized-theme htmlize doom-modeline neotree smartparens which-key company flycheck counsel ivy all-the-icons use-package)))
  '(pdf-view-display-size (quote fit-page))
  '(pdf-view-resize-factor 1.1)
  '(pdf-view-use-unicode-ligther nil)
+ '(rainbow-identifiers-choose-face-function (quote rainbow-identifiers-cie-l*a*b*-choose-face) t)
+ '(rainbow-identifiers-cie-l*a*b*-lightness 70 t)
+ '(rainbow-identifiers-cie-l*a*b*-saturation 20 t)
  '(show-paren-delay 0)
- '(sp-escape-quotes-after-insert nil t))
+ '(sp-escape-quotes-after-insert nil t)
+ '(tooltip-mode -1))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -212,8 +221,8 @@
 (require 'init-org)
 ;; Project management
 (require 'init-projectile)
-;; Rainbow delimiters and smartparens
-(require 'init-smartparens)
+;; Highlights parens etc
+(require 'init-highlighting)
 ;; Changes ctrl-z to undo, uses undo-tree, adds ctrl-mousewheel to zoom in/out
 (require 'init-remap)
 ;; Helps with finding inbuilt functions/key combos (chords?)

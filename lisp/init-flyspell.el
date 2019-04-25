@@ -5,15 +5,23 @@
 
 ;;; Code:
 
+(use-package ispell
+  :defer t
+  :custom
+  (ispell-program-name "hunspell")
+  (ispell-dictionary "en_GB")
+  (ispell-really-aspell nil)
+  (ispell-really-hunspell t)
+  (ispell-encoding8-command t)
+  (ispell-silently-savep t))
+
 (use-package flyspell
-  :config
-  (progn 
-    (setq ispell-program-name "hunspell")
-    (setq ispell-list-command "--list") ;; run flyspell with aspell, not ispell
-    (setq flyspell-issue-message-flag nil)
-    
+  :defer t
+  :custom
+  (flyspell-delay 1)
   (add-hook 'text-mode-hook #'turn-on-flyspell)
-  (add-hook 'prog-mode-hook #'flyspell-prog-mode)))
+  (add-hook 'prog-mode-hook #'flyspell-prog-mode))
+
 (provide 'init-flyspell)
 
 ;;; init-flyspell.el ends here

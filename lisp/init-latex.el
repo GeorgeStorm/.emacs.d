@@ -8,6 +8,7 @@
 ;;; AucTeX config
 (use-package tex
   :ensure auctex
+  :defer t
   :bind (:map TeX-mode-map
               ("C-c C-o" . TeX-recenter-output-buffer)
               ("C-c C-l" . TeX-next-error)
@@ -34,6 +35,7 @@
   (add-hook 'TeX-after-compilation-finished-functions 'TeX-revert-document-buffer))
 
 (use-package bibtex
+  :defer t
   :after auctex
   :hook (bibtex-mode . my/bibtex-fill-column)
   :preface
@@ -42,6 +44,7 @@
     (setq fill-column 120)))
 
 (use-package reftex
+  :defer t
   :after auctex
   :custom
   (reftex-plug-into-AUCTeX t)
@@ -49,6 +52,7 @@
   (reftex-use-multiple-selection-buffers t))
 
 (use-package company-auctex
+  :defer t
   :after (auctex company)
   :config (company-auctex-init))
 
@@ -60,6 +64,7 @@
   :config (pdf-tools-install :no-query))
 
 (use-package pdf-view
+  :defer t
   :ensure nil
   :after pdf-tools
   :bind (:map pdf-view-mode-map
