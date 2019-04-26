@@ -7,7 +7,7 @@
   :ensure t
   :diminish company-mode
   :init
-  (setq company-idle-delay 0.1)
+  (setq company-idle-delay 0)
 
   :config
   (add-hook 'after-init-hook 'global-company-mode))

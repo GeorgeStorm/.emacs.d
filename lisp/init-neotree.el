@@ -5,10 +5,11 @@
 ;;; Code:
 
 (use-package neotree
+  :defer t
+  :ensure t
   :init
-  (require 'neotree)
+  (setq neo-window-width 50)
   :config
-  (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
   (setq neo-smart-open t)
   )
 (global-set-key [f8] 'neotree-toggle)

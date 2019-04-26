@@ -2,6 +2,7 @@
 
 ;;; Commentary:
 ;;; Change C-scroll to zoom in and out like Windows
+;;; Cycle through buffers
 ;;; Add undo-tree
 
 ;;; Code:
@@ -16,6 +17,13 @@
 (global-set-key [(control up)] 'scroll-down-1)
 (global-set-key [(control left)] 'scroll-right-1)
 (global-set-key [(control right)] 'scroll-left-1)
+
+;; Cycle through buffers with Ctrl-TAB/Ctrl-Shift-TAB
+(global-set-key [C-tab] 'next-buffer)
+(global-set-key [C-S-tab] 'previous-buffer)
+
+;; Try new search function
+(global-set-key (kbd "C-s") 'swiper-isearch)
 
 ;; Make control-z undo
 (let ((map (make-sparse-keymap)))

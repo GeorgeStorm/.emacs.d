@@ -85,13 +85,6 @@
               tab-width 2
               auto-fill-function nil)                ; Auto fill is annoying
 
-(dolist (mode
-         '(column-number-mode         ; Show column number in mode line.
-           delete-selection-mode      ; Replace selected text.
-           dirtrack-mode              ; directory tracking in *shell*
-           show-paren-mode))          ; Highlight matching parentheses.
-  (funcall mode 1))
-
 (when (version< emacs-version "24.4")
   (eval-after-load 'auto-compile
     '((auto-compile-on-save-mode 1))))  ; compile .el files on save.
@@ -106,12 +99,18 @@
 (desktop-save-mode 1)
 (display-time-mode 1)
 (global-auto-revert-mode t)
+(column-number-mode t)
+(delete-selection-mode t)
+(show-paren-mode t)
 
 ;; show recent files in right click menu.
-(require 'recentf)
-(setq recentf-max-saved-items 200
-      recentf-max-menu-items 15)
-(recentf-mode)
+(use-package recentf
+  :ensure t
+  :config
+  (setq recentf-max-saved-items 200
+        recentf-max-menu-items 15
+        recentf-auto-cleanup 'never)
+  (recentf-mode +1))
 
 (use-package smart-mode-line)
 (use-package all-the-icons
@@ -216,7 +215,7 @@
 ;; File explorer
 (require 'init-neotree)
 ;; C# in emacs?
-(require 'init-omnisharp)
+(require 'init-dotnet)
 ;; Org mode
 (require 'init-org)
 ;; Project management
