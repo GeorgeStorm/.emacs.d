@@ -65,9 +65,9 @@
   :ensure t)
 
 (setq delete-old-versions -1  ; delete excess backups silently
-      ;;version-control t
-      ;;vc-make-backup-files t
-      ;;vc-follow-symlinks t
+      version-control t
+      vc-make-backup-files t
+      vc-follow-symlinks t
       doc-view-continuous t ; At page edge goto next/previous.
       echo-keystrokes 0.1
       backup-directory-alist `(("." . "~/.emacs.d/backups"))
@@ -78,7 +78,7 @@
       coding-system-for-write 'utf-8
       sentence-end-double-space nil
       frame-title-format '("%m " invocation-name "@" system-name)
-      initial-scratch-message nil )
+      initial-scratch-message nil)
 
 (setq-default fill-column 100                        ; Maximum line width.
               indent-tabs-mode nil                   ; Use spaces instead of tabs.
