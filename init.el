@@ -6,33 +6,27 @@
 ;;; Code:
 
 ;; Starting emacs server if one not already running
-(setq server-auth-dir
-      (let ((dir (concat user-emacs-directory
-                         "server_" (format "%s_%s"
-                                           emacs-major-version
-                                           emacs-minor-version)
-                         "_" (system-name)
-                         "/")))
-        (make-directory dir :parents)
-        dir))
-
 (require 'server)
-(or (eq (server-running-p) t)
-    (server-start))
-(when (equal window-system 'w32)
-  (setq server-use-tcp t))
-
-(with-eval-after-load 'server
-  (when (equal window-system 'w32)
-    (defun server-ensure-safe-dir (dir) "Noop" t)))
+(unless (server-running-p)
+  (cond
+   ((eq system-type 'windows-nt)
+    (setq server-auth-dir "~\\.emacs.d\\server\\"))
+   ((eq system-type 'gnu/linux)
+    (setq server-auth-dir "~/.emacs.d/server/")))
+  (setq server-name "emacs-server-file")
+  (server-start))
 
 ;; Speed up startup
 (setq gc-cons-threshold 402653184
       gc-cons-percentage 0.6)
+(setq file-name-handler-alist-original file-name-handler-alist
+      file-name-handler-alist nil)
 (add-hook 'after-init-hook
           `(lambda ()
              (setq gc-cons-threshold 800000
                    gc-cons-percentage 0.1)
+             (setq file-name-handler-alist file-name-handler-alist-original)
+             (makunbound 'file-name-handler-alist-original)
              (garbage-collect)) t)
 
 ;; use-package setup
@@ -64,44 +58,43 @@
 (use-package bind-key
   :ensure t)
 
-(setq delete-old-versions -1  ; delete excess backups silently
+(setq delete-old-versions -1 ;; Delete excess backups silently
       version-control t
       vc-make-backup-files t
       vc-follow-symlinks t
-      doc-view-continuous t ; At page edge goto next/previous.
+      doc-view-continuous t ;; At page edge goto next/previous.
       echo-keystrokes 0.1
       backup-directory-alist `(("." . "~/.emacs.d/backups"))
       auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t))
       inhibit-startup-screen t
-      ring-bell-function 'ignore  ; silent bell on mistakes
+      ring-bell-function 'ignore ;; Silent bell on mistakes
       coding-system-for-read 'utf-8
       coding-system-for-write 'utf-8
       sentence-end-double-space nil
       frame-title-format '("%m " invocation-name "@" system-name)
       initial-scratch-message nil)
 
-(setq-default fill-column 100                        ; Maximum line width.
-              indent-tabs-mode nil                   ; Use spaces instead of tabs.
-              tab-width 2
-              auto-fill-function nil)                ; Auto fill is annoying
+(setq-default fill-column 100 ;; Maximum line width.
+              indent-tabs-mode nil ;; Use spaces instead of tabs.
+              tab-width 2 ;; Size of tab in spaces
+              auto-fill-function nil) ;; Auto fill is annoying
 
-(when (version< emacs-version "24.4")
-  (eval-after-load 'auto-compile
-    '((auto-compile-on-save-mode 1))))  ; compile .el files on save.
+;; Set default font
+(set-face-attribute 'default nil :family "Consolas" :height 100 )
 
 ;; Better defaults
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(menu-bar-mode -1)
-(tooltip-mode -1)
-(fset 'yes-or-no-p 'y-or-n-p)
-(global-display-line-numbers-mode t )
-(desktop-save-mode 1)
-(display-time-mode 1)
-(global-auto-revert-mode t)
-(column-number-mode t)
-(delete-selection-mode t)
-(show-paren-mode t)
+(tool-bar-mode -1) ;; Disable tool bar
+(scroll-bar-mode -1) ;; Disable scroll bar
+(menu-bar-mode -1) ;; Disable menu
+(tooltip-mode -1) ;; Disable tooltips
+(fset 'yes-or-no-p 'y-or-n-p) ;; Only required to type y/n instead of yes/no
+(global-display-line-numbers-mode t ) ;; Display line numbers
+(desktop-save-mode 1) ;; Save previous buffers/frames
+(display-time-mode 1) ;; Display the time in the modeline
+(global-auto-revert-mode t) ;; Automatically update buffers if changes on disk
+(column-number-mode t) ;; Display the current column in the modeline
+(delete-selection-mode t) ;; Deletes selected text when typing
+(show-paren-mode t) ;; Highlights matching paren
 
 ;; show recent files in right click menu.
 (use-package recentf
@@ -112,15 +105,18 @@
         recentf-auto-cleanup 'never)
   (recentf-mode +1))
 
-(use-package smart-mode-line)
+(use-package smart-mode-line) ;; Nicer looking modeline
+
+;; Required for doom-themes
 (use-package all-the-icons
   :ensure t
   :defer t)
+
 ;; Allows export of orgmode files to html
 (use-package htmlize
   :defer t)
 
-;; show warnings in a small window
+;; Show warnings in a small window on opening
 (setq display-buffer-alist
   '(("[*]Warnings[*]" .
      (display-buffer-in-side-window . '((side . bottom))))))
@@ -140,8 +136,7 @@
 
 (add-hook 'emacs-startup-hook 'load-persistent-scratch)
 (add-hook 'kill-emacs-hook 'save-persistent-scratch)
-
-(run-with-idle-timer 300 t 'save-persistent-scratch)
+(run-with-idle-timer 180 t 'save-persistent-scratch) ;; Save the scratch buffer every 5mins
 
 ;; Compilation flags
 (setq-default
@@ -167,7 +162,6 @@
  '(doom-modeline-buffer-file-name-style (quote buffer-name) t)
  '(doom-modeline-icon t t)
  '(doom-modeline-major-mode-icon t t)
- '(face-font-family-alternatives (quote (("Consolas" "Monaco" "Monospace"))))
  '(flyspell-delay 1 t)
  '(ispell-dictionary "en_GB" t)
  '(ispell-encoding8-command t t)
@@ -200,10 +194,14 @@
 (require 'init-company)
 ;; Startup dashboard
 (require 'init-dashboard)
+;; C# in emacs?
+(require 'init-dotnet)
 ;; Syntax checking
 (require 'init-flycheck)
 ;; Spell checking
 (require 'init-flyspell)
+;; Highlights parens etc
+(require 'init-highlighting)
 ;; Searching
 (require 'init-ivy)
 ;; Latex/PDF mode
@@ -214,14 +212,10 @@
 (require 'init-magit)
 ;; File explorer
 (require 'init-neotree)
-;; C# in emacs?
-(require 'init-dotnet)
 ;; Org mode
 (require 'init-org)
 ;; Project management
 (require 'init-projectile)
-;; Highlights parens etc
-(require 'init-highlighting)
 ;; Changes ctrl-z to undo, uses undo-tree, adds ctrl-mousewheel to zoom in/out
 (require 'init-remap)
 ;; Helps with finding inbuilt functions/key combos (chords?)

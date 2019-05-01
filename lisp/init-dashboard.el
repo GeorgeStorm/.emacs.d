@@ -8,8 +8,6 @@
   :if (< (length command-line-args) 2)
   :preface
   (defun my/dashboard-banner ()
-    "Sets a dashboard banner including information on package initialization
-     time and garbage collections."
     (setq dashboard-banner-logo-title
           (format "Emacs ready in %.2f seconds with %d garbage collections."
                   (float-time

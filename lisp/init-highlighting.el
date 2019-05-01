@@ -4,46 +4,46 @@
 
 ;;; Code:
 
-;; highlights word under cursor
+;; Highlights word under cursor
 (use-package idle-highlight-mode
   :ensure t
   :hook prog-mode)
 
-;; highlights matching parens
+;; Highlights matching parens
 (use-package smartparens
   :defer 1
   :delight
   :custom (sp-escape-quotes-after-insert nil)
   :config (smartparens-global-mode 1))
 
-;; colours paren pairs
+;; Colours paren pairs
 (use-package rainbow-delimiters
   :ensure t
   :hook (prog-mode . rainbow-delimiters-mode))
 
-;; highlights numbers
+;; Highlights numbers
 (use-package highlight-numbers
   :ensure t
   :hook
   (prog-mode . highlight-numbers-mode))
 
-;; highlights escape sequences
+;; Highlights escape sequences
 (use-package highlight-escape-sequences
   :ensure t
   :config (hes-mode))
 
-;; highlights current line
+;; Highlights current line
 (use-package hl-line
   :hook
   (prog-mode . hl-line-mode))
 
-;; colours background under hex colour codes
+;; Colours background under hex colour codes
 (use-package rainbow-mode
   :ensure t
   :diminish rainbow-mode
   :hook prog-mode)
 
-;; colours words 
+;; Colours words 
 (use-package rainbow-identifiers
   :ensure t
   :custom

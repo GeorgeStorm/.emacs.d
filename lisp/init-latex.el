@@ -16,8 +16,8 @@
               ("M-]" . outline-next-heading))
   :hook (LaTeX-mode . reftex-mode)
   :preface
-  (defun my/switch-to-help-window (&optional ARG REPARSE)
-    "Switches to the *TeX Help* buffer after compilation."
+  (defun my/switch-to-help-window (&optional ARG REPARSE)         
+    ;; "Switches to the *TeX Help* buffer after compilation."
     (other-window 1))
   :custom
   (TeX-auto-save t)
@@ -31,7 +31,7 @@
   :config
   (advice-add 'TeX-next-error :after #'my/switch-to-help-window)
   (advice-add 'TeX-recenter-output-buffer :after #'my/switch-to-help-window)
-  ;; the ":hook" doesn't work for this one... don't ask me why.
+  ;; The ":hook" doesn't work for this one... don't ask me why.
   (add-hook 'TeX-after-compilation-finished-functions 'TeX-revert-document-buffer))
 
 (use-package bibtex
@@ -40,7 +40,7 @@
   :hook (bibtex-mode . my/bibtex-fill-column)
   :preface
   (defun my/bibtex-fill-column ()
-    "Ensures that each entry does not exceed 120 characters."
+    ;; "Ensures that each entry does not exceed 120 characters."
     (setq fill-column 120)))
 
 (use-package reftex
@@ -68,7 +68,6 @@
   :ensure nil
   :after pdf-tools
   :bind (:map pdf-view-mode-map
-              ("C-s" . isearch-forward)
               ("d" . pdf-annot-delete)
               ("h" . pdf-annot-add-highlight-markup-annotation)
               ("t" . pdf-annot-add-text-annotation))

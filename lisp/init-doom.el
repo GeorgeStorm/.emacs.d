@@ -33,13 +33,6 @@
 	;; Corrects (and improves) org-mode's native fontification.
 	(doom-themes-org-config))
 
-(use-package solaire-mode
-  :hook
-  ((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
-  (minibuffer-setup . solaire-mode-in-minibuffer)
-  :config
-  (solaire-mode-swap-bg))
-
 (provide 'init-doom)
 
 ;;; init-doom.el ends here

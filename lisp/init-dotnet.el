@@ -11,9 +11,9 @@
   :config
   (setq indent-tabs-mode nil
 	c-syntactic-indentation t
-	c-basic-offset 3
+	c-basic-offset 3 ;; To match VS default
 	truncate-lines t
-	tab-width 3))
+	tab-width 3)) ;; To match VS default
 
 (use-package omnisharp
   :defer t
@@ -23,6 +23,7 @@
   :config
   (add-to-list 'company-backends 'company-omnisharp)
   (add-hook 'csharp-mode-hook 'omnisharp-mode))
+
 (provide 'init-dotnet)
 
 ;;; init-dotnet.el ends here

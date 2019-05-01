@@ -1,0 +1,534 @@
+#+TITLE: George's Emacs config
+* Overview
+This is the repository for my Emacs config, will change as I find new things that interest me or better ways of doing things etc. It involves a main [[file:init.el][init.el]] which contains a lot of the more common/basic configuration, and then a lisp folder containing init-xxx.el files for packages I use. It's not overly consistant between what's in its own init-xxx.el or the main file, due to things being fairly fluid at the moment.
+
+Rough idea of its current contents is as follows:
+** Starts a server
+   Starts an Emacs server if one doesn't exist already. On Windows you'll also need to create an Environment Variable called EMACS_SERVER_FILE and point to the server file.
+   #+BEGIN_SRC elisp
+     (require 'server)
+     (unless (server-running-p)
+       (cond
+        ((eq system-type 'windows-nt)
+         (setq server-auth-dir "~\\.emacs.d\\server\\"))
+        ((eq system-type 'gnu/linux)
+         (setq server-auth-dir "~/.emacs.d/server/")))
+       (setq server-name "emacs-server-file")
+       (server-start))
+   #+END_SRC
+** Startup tweaks
+   Temporarily increases the limit for Garbage Collections, allowing fewer to take place whilst opening Emacs, and then putting them back to more sensible levels afterwards.
+   #+BEGIN_SRC elisp
+     (setq gc-cons-threshold 402653184
+           gc-cons-percentage 0.6)
+     (setq file-name-handler-alist-original file-name-handler-alist
+           file-name-handler-alist nil)
+     (add-hook 'after-init-hook
+               `(lambda ()
+                  (setq gc-cons-threshold 800000
+                        gc-cons-percentage 0.1)
+                  (setq file-name-handler-alist file-name-handler-alist-original)
+                  (makunbound 'file-name-handler-alist-original)
+                  (garbage-collect)) t)
+   #+END_SRC
+** General setup
+   Changing some default settings and behaviours to something I'm more comfortable with.
+   #+BEGIN_SRC elisp
+     (setq delete-old-versions -1 ;; Delete excess backups silently
+           version-control t
+           vc-make-backup-files t
+           vc-follow-symlinks t
+           doc-view-continuous t ;; At page edge goto next/previous.
+           echo-keystrokes 0.1
+           backup-directory-alist `(("." . "~/.emacs.d/backups"))
+           auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t))
+           inhibit-startup-screen t
+           ring-bell-function 'ignore ;; Silent bell on mistakes
+           coding-system-for-read 'utf-8
+           coding-system-for-write 'utf-8
+           sentence-end-double-space nil
+           frame-title-format '("%m " invocation-name "@" system-name)
+           initial-scratch-message nil)
+
+     (setq-default fill-column 100 ;; Maximum line width.
+                   indent-tabs-mode nil ;; Use spaces instead of tabs.
+                   tab-width 2 ;; Size of tab in spaces
+                   auto-fill-function nil) ;; Auto fill is annoying
+
+     ;; Set default font
+     (set-face-attribute 'default nil :family "Consolas" :height 100 )
+
+     ;; Better defaults
+     (tool-bar-mode -1) ;; Disable tool bar
+     (scroll-bar-mode -1) ;; Disable scroll bar
+     (menu-bar-mode -1) ;; Disable menu
+     (tooltip-mode -1) ;; Disable tooltips
+     (fset 'yes-or-no-p 'y-or-n-p) ;; Only required to type y/n instead of yes/no
+     (global-display-line-numbers-mode t ) ;; Display line numbers
+     (desktop-save-mode 1) ;; Save previous buffers/frames
+     (display-time-mode 1) ;; Display the time in the modeline
+     (global-auto-revert-mode t) ;; Automatically update buffers if changes on disk
+     (column-number-mode t) ;; Display the current column in the modeline
+     (delete-selection-mode t) ;; Deletes selected text when typing
+     (show-paren-mode t) ;; Highlights matching paren
+   #+END_SRC
+** If there are warnings on startup they'll be displayed in a small window
+   #+BEGIN_SRC elisp
+     (setq display-buffer-alist
+           '(("[*]Warnings[*]" .
+              (display-buffer-in-side-window . '((side . bottom))))))
+   #+END_SRC
+** A persistant scratch file
+  One thing I really liked and used a lot with N++ was being able to open a blank file and paste something in, and without saving it as anything in particular knowing it would be there the next time I opened the program, this block creates a similar effect.
+  #+BEGIN_SRC elisp
+    (defun save-persistent-scratch ()
+      (with-current-buffer (get-buffer-create "*scratch*")
+        (write-region (point-min) (point-max)
+                      (concat user-emacs-directory "scratch"))))
+
+    (defun load-persistent-scratch ()
+      (let ((scratch-file (concat user-emacs-directory "scratch")))
+        (if (file-exists-p scratch-file)
+            (with-current-buffer (get-buffer "*scratch*")
+              (delete-region (point-min) (point-max))
+              (insert-file-contents scratch-file)))))
+
+    (add-hook 'emacs-startup-hook 'load-persistent-scratch)
+    (add-hook 'kill-emacs-hook 'save-persistent-scratch)
+    (run-with-idle-timer 180 t 'save-persistent-scratch) ;; Save the scratch buffer every 5mins
+  #+END_SRC
+** Loading various packages:
+   These are all individual files in my lisp folder.
+   #+BEGIN_SRC elisp
+     ;; Pull in ./lisp/*
+     (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+     ;; Autocomplete
+     (require 'init-company)
+     ;; Startup dashboard
+     (require 'init-dashboard)
+     ;; C# in emacs?
+     (require 'init-dotnet)
+     ;; Syntax checking
+     (require 'init-flycheck)
+     ;; Spell checking
+     (require 'init-flyspell)
+     ;; Highlights parens etc
+     (require 'init-highlighting)
+     ;; Searching
+     (require 'init-ivy)
+     ;; Latex/PDF mode
+     (require 'init-latex)
+     ;; Ledger mode
+     (require 'init-ledger)
+     ;; GIT in emacs
+     (require 'init-magit)
+     ;; File explorer
+     (require 'init-neotree)
+     ;; Org mode
+     (require 'init-org)
+     ;; Project management
+     (require 'init-projectile)
+     ;; Changes ctrl-z to undo, uses undo-tree, adds ctrl-mousewheel to zoom in/out
+     (require 'init-remap)
+     ;; Helps with finding inbuilt functions/key combos (chords?)
+     (require 'init-which-key)
+
+     ;; Theme
+     (require 'init-doom)
+   #+END_SRC
+*** init-company
+    Used for completion, removed the delay before a completion suggestion can appear.
+    #+BEGIN_SRC elisp
+      (use-package company
+        :ensure t
+        :diminish company-mode
+        :init
+        (setq company-idle-delay 0)
+        :config
+        (add-hook 'after-init-hook 'global-company-mode))
+      (provide 'init-company)
+    #+END_SRC
+*** init-dashboard
+    Gives a nice (in my opinion) start screen showing load time and recent files.
+    #+BEGIN_SRC elisp
+      (use-package dashboard
+        :if (< (length command-line-args) 2)
+        :preface
+        (defun my/dashboard-banner ()
+          (setq dashboard-banner-logo-title
+                (format "Emacs ready in %.2f seconds with %d garbage collections."
+                        (float-time
+                         (time-subtract after-init-time before-init-time)) gcs-done)))
+        (setq dashboard-items '((recents  . 15)))
+        :init
+        (add-hook 'after-init-hook 'dashboard-refresh-buffer)
+        (add-hook 'dashboard-mode-hook 'my/dashboard-banner)
+        :custom (dashboard-startup-banner 'logo)
+        :config (dashboard-setup-startup-hook))
+
+      (provide 'init-dashboard)
+    #+END_SRC
+*** init-flycheck
+    Used for real time syntax checking
+    #+BEGIN_SRC elisp
+      (use-package flycheck
+        :defer t
+        :ensure t
+        :config (add-hook 'prog-mode-hook 'flycheck-mode)
+        (add-hook 'after-init-hook #'global-flycheck-mode))
+
+      (provide 'init-flycheck)
+    #+END_SRC
+*** init-flyspell
+    Used for real time spell checking, using hunspell.
+    #+BEGIN_SRC elisp
+      (use-package ispell
+        :defer t
+        :custom
+        (ispell-program-name "hunspell")
+        (ispell-dictionary "en_GB")
+        (ispell-really-aspell nil)
+        (ispell-really-hunspell t)
+        (ispell-encoding8-command t)
+        (ispell-silently-savep t))
+
+      (use-package flyspell
+        :defer t
+        :custom
+        (flyspell-delay 1)
+        (add-hook 'text-mode-hook #'turn-on-flyspell)
+        (add-hook 'prog-mode-hook #'flyspell-prog-mode))
+
+      (provide 'init-flyspell)
+    #+END_SRC
+*** init-highlighting
+    Highlights other uses of the same word/symbol whenever in a programming mode.
+    #+BEGIN_SRC elisp
+      (use-package idle-highlight-mode
+        :ensure t
+        :hook prog-mode)
+    #+END_SRC
+    Highlights and colours matching parens
+    #+BEGIN_SRC elisp
+      ;; Highlights matching parens
+      (use-package smartparens
+        :defer 1
+        :delight
+        :custom (sp-escape-quotes-after-insert nil)
+        :config (smartparens-global-mode 1))
+
+      ;; Colours paren pairs
+      (use-package rainbow-delimiters
+        :ensure t
+        :hook (prog-mode . rainbow-delimiters-mode))
+    #+END_SRC
+    Highlights numbers
+    #+BEGIN_SRC elisp
+      (use-package highlight-numbers
+        :ensure t
+        :hook
+        (prog-mode . highlight-numbers-mode))
+    #+END_SRC
+    Highlights escape sequences
+    #+BEGIN_SRC elisp
+      (use-package highlight-escape-sequences
+        :ensure t
+        :config (hes-mode))
+    #+END_SRC
+    Highlights current line
+    #+BEGIN_SRC elisp
+      (use-package hl-line
+        :hook
+        (prog-mode . hl-line-mode))
+    #+END_SRC
+    Colours the background under hex colour codes
+    #+BEGIN_SRC elisp
+      (use-package rainbow-mode
+        :ensure t
+        :diminish rainbow-mode
+        :hook prog-mode)
+    #+END_SRC
+    Colours wrods in elisp and programming modes
+    #+BEGIN_SRC elisp
+      (use-package rainbow-identifiers
+        :ensure t
+        :custom
+        (rainbow-identifiers-cie-l*a*b*-lightness 70)
+        (rainbow-identifiers-cie-l*a*b*-saturation 20)
+        (rainbow-identifiers-choose-face-function
+         #'rainbow-identifiers-cie-l*a*b*-choose-face)
+        :hook
+        (emacs-lisp-mode . rainbow-identifiers-mode) ; actually, turns it off
+        (prog-mode . rainbow-identifiers-mode))
+    #+END_SRC
+*** init-ivy
+    Used for fuzzy search
+    #+BEGIN_SRC elisp
+      (use-package ivy
+        :diminish (ivy-mode . "")
+        :init (ivy-mode 1) ;; Globally at startup
+        :config
+        (setq ivy-use-virtual-buffers t)
+        (setq ivy-height 20)
+        (setq ivy-count-format "%d/%d "))
+    #+END_SRC
+    Counsel to expand/enhance ivy's featureset.
+    #+BEGIN_SRC elisp
+      (use-package counsel
+        :bind* ;; Load when pressed
+        (("M-x"     . counsel-M-x)
+         ("C-s"     . swiper)
+         ("C-x C-f" . counsel-find-file)
+         ("C-x C-r" . counsel-recentf) ;; Search for recently edited
+         ("C-c g"   . counsel-git) ;; Search for files in git repo
+         ("C-c s"   . counsel-git-grep) ;; Search for regexp in git repo
+         ("C-x l"   . counsel-locate)
+         ("<f1> f"  . counsel-describe-function)
+         ("<f1> v"  . counsel-describe-variable)
+         ("<f1> l"  . counsel-find-library)
+         ("<f2> i"  . counsel-info-lookup-symbol)
+         ("<f2> u"  . counsel-unicode-char)
+         ("C-c C-r" . ivy-resume))) ;; Resume last Ivy-based completion
+    #+END_SRC 
+*** init-latex
+    Allows the creation of latex documents.
+    Uses auxtec for the compilation.
+    #+BEGIN_SRC elisp
+      (use-package tex
+        :ensure auctex
+        :defer t
+        :bind (:map TeX-mode-map
+                    ("C-c C-o" . TeX-recenter-output-buffer)
+                    ("C-c C-l" . TeX-next-error)
+                    ("M-[" . outline-previous-heading)
+                    ("M-]" . outline-next-heading))
+        :hook (LaTeX-mode . reftex-mode)
+        :preface
+        (defun my/switch-to-help-window (&optional ARG REPARSE)
+          ;; "Switches to the *TeX Help* buffer after compilation."
+          (other-window 1))
+        :custom
+        (TeX-auto-save t)
+        (TeX-byte-compile t)
+        (TeX-clean-confirm nil)
+        (TeX-master 'dwim)
+        (TeX-parse-self t)
+        (TeX-PDF-mode t)
+        (TeX-source-correlate-mode t)
+        (TeX-view-program-selection '((output-pdf "PDF Tools")))
+        :config
+        (advice-add 'TeX-next-error :after #'my/switch-to-help-window)
+        (advice-add 'TeX-recenter-output-buffer :after #'my/switch-to-help-window)
+        ;; The ":hook" doesn't work for this one... don't ask me why.
+        (add-hook 'TeX-after-compilation-finished-functions 'TeX-revert-document-buffer))
+    #+END_SRC
+    Bibtex and reftex for citations/references
+    #+BEGIN_SRC elisp
+      (use-package bibtex
+        :defer t
+        :after auctex
+        :hook (bibtex-mode . my/bibtex-fill-column)
+        :preface
+        (defun my/bibtex-fill-column ()
+          ;; "Ensures that each entry does not exceed 120 characters."
+          (setq fill-column 120)))
+
+      (use-package reftex
+        :defer t
+        :after auctex
+        :custom
+        (reftex-plug-into-AUCTeX t)
+        (reftex-save-parse-info t)
+        (reftex-use-multiple-selection-buffers t))
+    #+END_SRC
+    For the viewing of PDF files within emacs I use pdf-tools and pdf-view.
+#+BEGIN_SRC elisp
+(use-package pdf-tools
+  :defer 1
+  :magic ("%PDF" . pdf-view-mode)
+  :config (pdf-tools-install :no-query))
+
+(use-package pdf-view
+  :defer t
+  :ensure nil
+  :after pdf-tools
+  :bind (:map pdf-view-mode-map
+              ("d" . pdf-annot-delete)
+              ("h" . pdf-annot-add-highlight-markup-annotation)
+              ("t" . pdf-annot-add-text-annotation))
+  :custom
+  (pdf-view-display-size 'fit-page)
+  (pdf-view-resize-factor 1.1)
+  (pdf-view-use-unicode-ligther nil))
+#+END_SRC
+*** init-ledger
+    Used for money management, not something I currently do and so whilst I've got some code based on another setup I've yet to customise and use it so won't show it here.
+*** init-magit
+    Git in Emacs! I've recently been trying to use Git more, and this seems to be the go-to package for git in emacs, and from what I've seen so far seems to be very powerful in the right hands, currently just use it for simple commit/push/pull commands.
+    #+BEGIN_SRC elisp
+      (use-package magit
+        :ensure t
+        :defer t
+        :bind (("C-x g"   . magit-status)
+               ("C-x M-g" . magit-dispatch))
+        :config
+        (magit-add-section-hook 'magit-status-sections-hook
+                                'magit-insert-modules
+                                'magit-insert-stashes
+                                'append))
+    #+END_SRC
+*** init-neotree
+    Quick file explorer, bound to F8 so I can quickly see the directory structure of where I am if needed, find myself using it a lot less than I thought I would.
+    #+BEGIN_SRC elisp
+      (use-package neotree
+        :defer t
+        :ensure t
+        :init
+        (setq neo-window-width 50)
+        :config
+        (setq neo-smart-open t)
+        )
+      (global-set-key [f8] 'neotree-toggle) ;; Bind to F8
+    #+END_SRC
+*** init-dotnet
+    Using omnisharp to allow C# programming in Emacs if needed. Uses a tab-width of 3 when in c# mode so it matches the Visual Studio default.
+    #+BEGIN_SRC elisp
+      (use-package csharp-mode
+        :mode ("\\.cs\\'" . csharp-mode)
+        :config
+        (setq indent-tabs-mode nil
+              c-syntactic-indentation t
+              c-basic-offset 3 ;; To match VS default
+              truncate-lines t
+              tab-width 3)) ;; To match VS default
+
+      (use-package omnisharp
+        :defer t
+        :init
+        (setq omnisharp-server-executable-path "~/.emacs.d/.cache/omnisharp/server/v1.32.18/OmniSharp.exe")
+        :after company
+        :config
+        (add-to-list 'company-backends 'company-omnisharp)
+        (add-hook 'csharp-mode-hook 'omnisharp-mode))
+    #+END_SRC
+*** init-org
+    Org mode setup, nothing much here as I've only just started trying to use org-mode
+    #+BEGIN_SRC elisp
+      (setq org-src-tab-acts-natively t)
+      (add-hook 'org-mode-hook #'toggle-word-wrap)
+      (setq org-startup-truncated nil)
+    #+END_SRC
+*** init-projectile
+    Used for project management, again not currently used so won't show it here.
+*** init-remap
+   Here I do a lot of my key binding/remapping.
+   Changing the default scrolling behaviour, adding in C-<mousewheel> in order to act like I'm used to in other programs.
+   #+BEGIN_SRC elisp
+     ;; scrolling behavior
+     (setq mouse-wheel-scroll-amount '(10 ((shift) . 1))) ; one line at a time
+     (setq mouse-wheel-progressive-speed nil) ; don't accelerate scrolling
+     (setq mouse-wheel-follow-mouse 't) ; scroll window under mouse  ;; scrolling behavior
+
+     ;; scroll without moving point
+     (require 'smooth-scroll)
+     (global-set-key [(control down)] 'scroll-up-1)
+     (global-set-key [(control up)] 'scroll-down-1)
+     (global-set-key [(control left)] 'scroll-right-1)
+     (global-set-key [(control right)] 'scroll-left-1)
+
+     ;; zoom in/out like we do everywhere else.
+     (global-set-key (kbd "C-+") 'text-scale-increase)
+     (global-set-key (kbd "C-=") 'text-scale-decrease)
+     (global-set-key (kbd "<C-wheel-down>") 'text-scale-decrease)
+     (global-set-key (kbd "<C-wheel-up>") 'text-scale-increase)
+
+     ;; page up/down
+     (global-set-key (kbd "<C-prior>") 'beginning-of-buffer)
+     (global-set-key (kbd "<C-next>") 'end-of-buffer)
+   #+END_SRC
+   Bound C-TAB/C-S-TAB to cycle back and forth between buffers, again to act like other programs.
+   #+BEGIN_SRC elisp
+     ;; Cycle through buffers with Ctrl-TAB/Ctrl-Shift-TAB
+     (global-set-key [C-tab] 'next-buffer)
+     (global-set-key [C-S-tab] 'previous-buffer)
+   #+END_SRC
+   Middle mouse now acts as a generic paste and selecting a region a generic copy.
+   #+BEGIN_SRC elisp
+     ;; Better paste behaviour?
+     (setq select-active-regions nil)
+     (setq mouse-drag-copy-region t)
+     (global-set-key [mouse-2] 'mouse-yank-at-click)
+   #+END_SRC
+   I use undo-tree in order to improve the emacs undo/redo behaviour, and also use C-z/C-S-z for undo/redo as I'm just too used to them.
+   #+BEGIN_SRC elisp
+     ;; Make control-z undo
+     (let ((map (make-sparse-keymap)))
+       ;; remap `undo' and `undo-only' to `undo-tree-undo'
+       (define-key map [remap undo] 'undo-tree-undo)
+       (define-key map [remap undo-only] 'undo-tree-undo)
+       ;; bind standard undo bindings (since these match redo counterparts)
+       (define-key map (kbd "C-z") 'undo-tree-undo)
+       (define-key map (kbd "C-S-z") 'undo-tree-redo)
+       ;; just in case something has defined `redo'...
+       (define-key map [remap redo] 'undo-tree-redo)
+       ;; we use "C-x U" for the undo-tree visualizer
+       (define-key map (kbd "C-x U") 'undo-tree-visualize)
+       ;; bind register commands
+       (define-key map (kbd "C-x r u") 'undo-tree-save-state-to-register)
+       (define-key map (kbd "C-x r U") 'undo-tree-restore-state-from-register)
+       ;; set keymap
+       (setq undo-tree-map map))
+
+     (global-undo-tree-mode t)
+
+     ;; Make C-g quit undo tree
+     (define-key undo-tree-visualizer-mode-map (kbd "C-g") 'undo-tree-visualizer-quit)
+     (define-key undo-tree-visualizer-mode-map (kbd "<escape> <escape> <escape>") 'undo-tree-visualizer-quit)
+   #+END_SRC
+*** init-which-key
+    Used for instruction narrowing, can help when key combinations aren't known/you can't remember.
+    #+BEGIN_SRC elisp
+      (use-package which-key
+        :init
+        (which-key-mode)
+        :config
+        (which-key-setup-side-window-bottom)
+        (setq which-key-sort-order 'which-key-key-order-alpha
+              which-key-side-window-max-width 0.33
+              which-key-idle-delay 0.05)
+        :diminish which-key-mode)
+    #+END_SRC
+*** init-doom
+    Use the doom-modeline package for a neat fairly minimalist modeline
+    #+BEGIN_SRC elisp
+      (use-package doom-modeline
+        :ensure t
+        :hook
+        (after-init . doom-modeline-init)
+        :custom
+        (doom-modeline-major-mode-icon t)
+        (doom-modeline-buffer-file-name-style 'buffer-name)
+        (doom-modeline-icon t))
+    #+END_SRC
+    I use doom-themes for a general emacs theme (currently doom-vibrant) and also a neotree and org-mode theme.
+    #+BEGIN_SRC elisp
+      (use-package doom-themes
+        :config
+
+        ;; Global settings (defaults)
+        (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+              doom-themes-enable-italic t) ; if nil, italics is universally disabled
+
+        ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
+        ;; may have their own settings.
+        (load-theme 'doom-vibrant t)
+
+        ;; Enable flashing mode-line on errors
+        (doom-themes-visual-bell-config)
+
+        ;; Enable custom neotree theme (all-the-icons must be installed!)
+        (doom-themes-neotree-config)
+
+        ;; Corrects (and improves) org-mode's native fontification.
+        (doom-themes-org-config))
+    #+END_SRC
