@@ -171,7 +171,7 @@
  '(ispell-silently-savep t t)
  '(org-agenda-files
    (quote
-    ("c:/Users/gwaldie/OneDrive/org/TODO_home.org" "c:/Users/gwaldie/Desktop/TODO.org" "c:/Users/gwaldie/OneDrive/org/general.org")))
+    ("c:/PhD/Thesis/Documents/_PhD_Thesis/thesis.org" "c:/Users/gwaldie/OneDrive/org/TODO_home.org" "c:/Users/gwaldie/Desktop/TODO.org" "c:/Users/gwaldie/OneDrive/org/general.org")))
  '(package-selected-packages
    (quote
     (omnisharp solaire-mode solarized-theme htmlize doom-modeline neotree smartparens which-key company flycheck counsel ivy all-the-icons use-package)))
@@ -182,7 +182,7 @@
  '(rainbow-identifiers-cie-l*a*b*-lightness 70)
  '(rainbow-identifiers-cie-l*a*b*-saturation 20)
  '(show-paren-delay 0)
- '(sp-escape-quotes-after-insert nil t)
+ '(sp-escape-quotes-after-insert nil)
  '(tooltip-mode -1))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

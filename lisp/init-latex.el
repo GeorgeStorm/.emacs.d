@@ -46,6 +46,8 @@
 (use-package reftex
   :defer t
   :after auctex
+  :config
+  (setq reftex-default-bibliography '("~/OneDrive/bibliography/references.bib"))
   :custom
   (reftex-plug-into-AUCTeX t)
   (reftex-save-parse-info t)

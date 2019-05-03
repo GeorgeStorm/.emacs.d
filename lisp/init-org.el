@@ -17,6 +17,10 @@
 	"pdflatex -interaction nonstopmode -output-directory %o %f"
 	"pdflatex -interaction nonstopmode -output-directory %o %f")))
 
+;; see org-ref for use of these variables
+(setq org-ref-bibliography-notes "~/OneDrive/bibliography/notes.org"
+      org-ref-default-bibliography '("~/OneDrive/bibliography/references.bib")
+      org-ref-pdf-directory "~/OneDrive/bibliography/bibtex-pdfs/")
 
 (setq bibtex-autokey-year-length 4
       bibtex-autokey-name-year-separator "-"
