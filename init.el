@@ -169,15 +169,18 @@
  '(ispell-really-aspell nil t)
  '(ispell-really-hunspell t t)
  '(ispell-silently-savep t t)
+ '(org-agenda-files
+   (quote
+    ("c:/Users/gwaldie/OneDrive/org/TODO_home.org" "c:/Users/gwaldie/Desktop/TODO.org" "c:/Users/gwaldie/OneDrive/org/general.org")))
  '(package-selected-packages
    (quote
     (omnisharp solaire-mode solarized-theme htmlize doom-modeline neotree smartparens which-key company flycheck counsel ivy all-the-icons use-package)))
  '(pdf-view-display-size (quote fit-page))
  '(pdf-view-resize-factor 1.1)
  '(pdf-view-use-unicode-ligther nil)
- '(rainbow-identifiers-choose-face-function (quote rainbow-identifiers-cie-l*a*b*-choose-face) t)
- '(rainbow-identifiers-cie-l*a*b*-lightness 70 t)
- '(rainbow-identifiers-cie-l*a*b*-saturation 20 t)
+ '(rainbow-identifiers-choose-face-function (quote rainbow-identifiers-cie-l*a*b*-choose-face))
+ '(rainbow-identifiers-cie-l*a*b*-lightness 70)
+ '(rainbow-identifiers-cie-l*a*b*-saturation 20)
  '(show-paren-delay 0)
  '(sp-escape-quotes-after-insert nil t)
  '(tooltip-mode -1))
@@ -216,6 +219,8 @@
 (require 'init-org)
 ;; Project management
 (require 'init-projectile)
+;; Python mode
+(require 'init-python)
 ;; Changes ctrl-z to undo, uses undo-tree, adds ctrl-mousewheel to zoom in/out
 (require 'init-remap)
 ;; Helps with finding inbuilt functions/key combos (chords?)
