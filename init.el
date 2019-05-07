@@ -72,7 +72,8 @@
       coding-system-for-write 'utf-8
       sentence-end-double-space nil
       frame-title-format '("%m " invocation-name "@" system-name)
-      initial-scratch-message nil)
+      initial-scratch-message nil
+      initial-buffer-choice "~/../../OneDrive/org/TODO.org")
 
 (setq-default fill-column 100 ;; Maximum line width.
               indent-tabs-mode nil ;; Use spaces instead of tabs.
@@ -171,7 +172,9 @@
  '(ispell-silently-savep t t)
  '(org-agenda-files
    (quote
-    ("c:/PhD/Thesis/Documents/_PhD_Thesis/thesis.org" "c:/Users/gwaldie/OneDrive/org/TODO_home.org" "c:/Users/gwaldie/Desktop/TODO.org" "c:/Users/gwaldie/OneDrive/org/general.org")))
+    ("c:/Users/gwaldie/OneDrive/org/TODO.org" "c:/Users/gwaldie/OneDrive/Documents/logbook.org" "c:/PhD/Thesis/Documents/_PhD_Thesis/thesis.org" "c:/Users/gwaldie/OneDrive/org/TODO_home.org" "c:/Users/gwaldie/OneDrive/org/general.org")))
+ '(org-agenda-tags-column -100)
+ '(org-tags-column -100)
  '(package-selected-packages
    (quote
     (omnisharp solaire-mode solarized-theme htmlize doom-modeline neotree smartparens which-key company flycheck counsel ivy all-the-icons use-package)))

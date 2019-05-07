@@ -4,10 +4,21 @@
 
 ;;; Code:
 
-(setq org-src-tab-acts-natively t
-      org-src-fontify-natively t)
-(add-hook 'org-mode-hook #'toggle-word-wrap)
-(setq org-startup-truncated nil)
+(use-package org
+  :ensure t
+  :mode ("\\.org\\'" . org-mode)
+  :bind ("C-c a" . org-agenda)
+  :config
+  (setq org-agenda-tags-column -100
+        org-tags-column -100
+        org-src-tab-acts-natively t
+        org-src-fontify-natively t
+        org-startup-truncated nil
+        org-pretty-entities t
+        org-pretty-entities-include-sub-superscripts t
+        org-use-sub-superscripts '{}))
+
+(add-hook 'after-init-hook 'org-agenda-list)
 
 (use-package org-ref
   :after org
