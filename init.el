@@ -72,13 +72,14 @@
       coding-system-for-write 'utf-8
       sentence-end-double-space nil
       frame-title-format '("%m " invocation-name "@" system-name)
-      initial-scratch-message nil
-      initial-buffer-choice "~/../../OneDrive/org/TODO.org")
+      initial-scratch-message nil)
 
-(setq-default fill-column 100 ;; Maximum line width.
+(setq-default fill-column 80 ;; Maximum line width.
               indent-tabs-mode nil ;; Use spaces instead of tabs.
-              tab-width 2 ;; Size of tab in spaces
-              auto-fill-function nil) ;; Auto fill is annoying
+              tab-width 2) ;; Size of tab in spaces
+
+(add-hook 'text-mode-hook 'turn-on-auto-fill) ;; Enable auto-fill for text buffers
+
 
 ;; Set default font
 (set-face-attribute 'default nil :family "Consolas" :height 100 )
@@ -102,7 +103,7 @@
   :ensure t
   :config
   (setq recentf-max-saved-items 200
-        recentf-max-menu-items 15
+        recentf-max-menu-items 25
         recentf-auto-cleanup 'never)
   (recentf-mode +1))
 
@@ -111,10 +112,6 @@
 ;; Required for doom-themes
 (use-package all-the-icons
   :ensure t
-  :defer t)
-
-;; Allows export of orgmode files to html
-(use-package htmlize
   :defer t)
 
 ;; Show warnings in a small window on opening
@@ -159,8 +156,12 @@
  '(TeX-source-correlate-mode t t)
  '(TeX-view-program-selection (quote ((output-pdf "PDF Tools"))) t)
  '(add-hook (quote prog-mode-hook) t)
+ '(custom-safe-themes
+   (quote
+    ("f0dc4ddca147f3c7b1c7397141b888562a48d9888f1595d69572db73be99a024" "9f08dacc5b23d5eaec9cccb6b3d342bd4fdb05faf144bdcd9c4b5859ac173538" "0f1733ad53138ddd381267b4033bcb07f5e75cd7f22089c7e650f1bb28fc67f4" "f07729f5245b3c8b3c9bd1780cbe6f3028a9e1ed45cad7a15dd1a7323492b717" "75d3dde259ce79660bac8e9e237b55674b910b470f313cdf4b019230d01a982a" "10461a3c8ca61c52dfbbdedd974319b7f7fd720b091996481c8fb1dded6c6116" "49ec957b508c7d64708b40b0273697a84d3fee4f15dd9fc4a9588016adee3dad" "a9d67f7c030b3fa6e58e4580438759942185951e9438dd45f2c668c8d7ab2caf" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d2e9c7e31e574bf38f4b0fb927aaff20c1e5f92f72001102758005e53d77b8c9" "8aca557e9a17174d8f847fb02870cb2bb67f3b6e808e46c0e54a44e3e18e1020" "6b2636879127bf6124ce541b1b2824800afc49c6ccd65439d6eb987dbf200c36" "7e78a1030293619094ea6ae80a7579a562068087080e01c2b8b503b27900165c" "100e7c5956d7bb3fd0eebff57fde6de8f3b9fafa056a2519f169f85199cc1c96" "886fe9a7e4f5194f1c9b1438955a9776ff849f9e2f2bbb4fa7ed8879cdca0631" "ef07cb337554ffebfccff8052827c4a9d55dc2d0bc7f08804470451385d41c5c" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default)))
  '(dashboard-startup-banner (quote logo) t)
  '(doom-modeline-buffer-file-name-style (quote buffer-name) t)
+ '(doom-modeline-enable-word-count t t)
  '(doom-modeline-icon t t)
  '(doom-modeline-major-mode-icon t t)
  '(flyspell-delay 1 t)
@@ -170,22 +171,17 @@
  '(ispell-really-aspell nil t)
  '(ispell-really-hunspell t t)
  '(ispell-silently-savep t t)
- '(org-agenda-files
-   (quote
-    ("c:/Users/gwaldie/OneDrive/org/TODO.org" "c:/Users/gwaldie/OneDrive/Documents/logbook.org" "c:/PhD/Thesis/Documents/_PhD_Thesis/thesis.org" "c:/Users/gwaldie/OneDrive/org/TODO_home.org" "c:/Users/gwaldie/OneDrive/org/general.org")))
- '(org-agenda-tags-column -100)
+ '(org-agenda-files nil)
+ '(org-agenda-tags-column -100 t)
  '(org-tags-column -100)
  '(package-selected-packages
    (quote
-    (omnisharp solaire-mode solarized-theme htmlize doom-modeline neotree smartparens which-key company flycheck counsel ivy all-the-icons use-package)))
+    (color-theme-sanityinc-tomorrow omnisharp solaire-mode solarized-theme htmlize doom-modeline neotree smartparens which-key company flycheck counsel ivy all-the-icons use-package)))
  '(pdf-view-display-size (quote fit-page))
  '(pdf-view-resize-factor 1.1)
  '(pdf-view-use-unicode-ligther nil)
- '(rainbow-identifiers-choose-face-function (quote rainbow-identifiers-cie-l*a*b*-choose-face))
- '(rainbow-identifiers-cie-l*a*b*-lightness 70)
- '(rainbow-identifiers-cie-l*a*b*-saturation 20)
  '(show-paren-delay 0)
- '(sp-escape-quotes-after-insert nil)
+ '(sp-escape-quotes-after-insert nil t)
  '(tooltip-mode -1))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -206,6 +202,8 @@
 (require 'init-flycheck)
 ;; Spell checking
 (require 'init-flyspell)
+;; Shows git status in fringe
+(require 'init-git-diff)
 ;; Highlights parens etc
 (require 'init-highlighting)
 ;; Searching

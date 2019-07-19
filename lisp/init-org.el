@@ -4,6 +4,10 @@
 
 ;;; Code:
 
+;; Allows export of orgmode files to html
+(use-package htmlize
+  :defer t)
+
 (use-package org
   :ensure t
   :mode ("\\.org\\'" . org-mode)
@@ -16,7 +20,11 @@
         org-startup-truncated nil
         org-pretty-entities t
         org-pretty-entities-include-sub-superscripts t
-        org-use-sub-superscripts '{}))
+        org-use-sub-superscripts '{}
+        org-agenda-custom-commands
+        '(("d" "Simple agenda view"
+           ((agenda "")
+            (alltodo ""))))))
 
 (add-hook 'after-init-hook 'org-agenda-list)
 

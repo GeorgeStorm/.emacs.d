@@ -17,9 +17,11 @@
 
 (use-package flyspell
   :defer t
+  :config
+  (setq flyspell-issue-message-flag nil)
   :custom
   (flyspell-delay 1)
-  (add-hook 'text-mode-hook #'turn-on-flyspell)
+  (add-hook 'text-mode-hook 'flyspell-mode)
   (add-hook 'prog-mode-hook #'flyspell-prog-mode))
 
 (provide 'init-flyspell)
