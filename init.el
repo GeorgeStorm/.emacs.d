@@ -114,6 +114,19 @@
   :ensure t
   :defer t)
 
+;; Used to track how often commands are used, to help improve effi by changing keymaps
+(use-package keyfreq)
+(keyfreq-mode 1)
+(keyfreq-autosave-mode 1)
+
+(use-package shell-pop  ;; Allows for small shell window to be made easily
+  :config
+  (setq shell-pop-full-span t ;; Shell windows spans entire emacs frame
+        shell-pop-shell-type (quote ("eshell" "*eshell*" (lambda nil (eshell
+                                                                      shell-pop-term-shell))))))
+  ;; Using eshell as the default (platform agnostic)
+(shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type)
+
 ;; Show warnings in a small window on opening
 (setq display-buffer-alist
   '(("[*]Warnings[*]" .
@@ -136,6 +149,19 @@
 (add-hook 'kill-emacs-hook 'save-persistent-scratch)
 (run-with-idle-timer 180 t 'save-persistent-scratch) ;; Save the scratch buffer every 5mins
 
+;; Insert date (for org notes files)
+(defun insert-date (prefix)
+    "Insert the current date. With prefix-argument, use ISO format. With
+   two prefix arguments, write out the day and month name."
+    (interactive "P")
+    (let ((format (cond
+                   ((not prefix) "%d.%m.%Y")
+                   ((equal prefix '(4)) "%Y-%m-%d")))
+          (system-time-locale "de_DE"))
+      (insert (format-time-string format))))
+
+(global-set-key (kbd "C-c d") 'insert-date)
+
 ;; Compilation flags
 (setq-default
  compilation-auto-jump-to-first-error t    ; Take me to the first error
@@ -155,10 +181,10 @@
  '(TeX-parse-self t t)
  '(TeX-source-correlate-mode t t)
  '(TeX-view-program-selection (quote ((output-pdf "PDF Tools"))) t)
- '(add-hook (quote prog-mode-hook) t)
+ '(add-hook (quote flyspell-mode-hook) t)
  '(custom-safe-themes
    (quote
-    ("f0dc4ddca147f3c7b1c7397141b888562a48d9888f1595d69572db73be99a024" "9f08dacc5b23d5eaec9cccb6b3d342bd4fdb05faf144bdcd9c4b5859ac173538" "0f1733ad53138ddd381267b4033bcb07f5e75cd7f22089c7e650f1bb28fc67f4" "f07729f5245b3c8b3c9bd1780cbe6f3028a9e1ed45cad7a15dd1a7323492b717" "75d3dde259ce79660bac8e9e237b55674b910b470f313cdf4b019230d01a982a" "10461a3c8ca61c52dfbbdedd974319b7f7fd720b091996481c8fb1dded6c6116" "49ec957b508c7d64708b40b0273697a84d3fee4f15dd9fc4a9588016adee3dad" "a9d67f7c030b3fa6e58e4580438759942185951e9438dd45f2c668c8d7ab2caf" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d2e9c7e31e574bf38f4b0fb927aaff20c1e5f92f72001102758005e53d77b8c9" "8aca557e9a17174d8f847fb02870cb2bb67f3b6e808e46c0e54a44e3e18e1020" "6b2636879127bf6124ce541b1b2824800afc49c6ccd65439d6eb987dbf200c36" "7e78a1030293619094ea6ae80a7579a562068087080e01c2b8b503b27900165c" "100e7c5956d7bb3fd0eebff57fde6de8f3b9fafa056a2519f169f85199cc1c96" "886fe9a7e4f5194f1c9b1438955a9776ff849f9e2f2bbb4fa7ed8879cdca0631" "ef07cb337554ffebfccff8052827c4a9d55dc2d0bc7f08804470451385d41c5c" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default)))
+    ("274fa62b00d732d093fc3f120aca1b31a6bb484492f31081c1814a858e25c72e" "1c082c9b84449e54af757bcae23617d11f563fc9f33a832a8a2813c4d7dfb652" "f0dc4ddca147f3c7b1c7397141b888562a48d9888f1595d69572db73be99a024" "9f08dacc5b23d5eaec9cccb6b3d342bd4fdb05faf144bdcd9c4b5859ac173538" "0f1733ad53138ddd381267b4033bcb07f5e75cd7f22089c7e650f1bb28fc67f4" "f07729f5245b3c8b3c9bd1780cbe6f3028a9e1ed45cad7a15dd1a7323492b717" "75d3dde259ce79660bac8e9e237b55674b910b470f313cdf4b019230d01a982a" "10461a3c8ca61c52dfbbdedd974319b7f7fd720b091996481c8fb1dded6c6116" "49ec957b508c7d64708b40b0273697a84d3fee4f15dd9fc4a9588016adee3dad" "a9d67f7c030b3fa6e58e4580438759942185951e9438dd45f2c668c8d7ab2caf" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d2e9c7e31e574bf38f4b0fb927aaff20c1e5f92f72001102758005e53d77b8c9" "8aca557e9a17174d8f847fb02870cb2bb67f3b6e808e46c0e54a44e3e18e1020" "6b2636879127bf6124ce541b1b2824800afc49c6ccd65439d6eb987dbf200c36" "7e78a1030293619094ea6ae80a7579a562068087080e01c2b8b503b27900165c" "100e7c5956d7bb3fd0eebff57fde6de8f3b9fafa056a2519f169f85199cc1c96" "886fe9a7e4f5194f1c9b1438955a9776ff849f9e2f2bbb4fa7ed8879cdca0631" "ef07cb337554ffebfccff8052827c4a9d55dc2d0bc7f08804470451385d41c5c" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default)))
  '(dashboard-startup-banner (quote logo) t)
  '(doom-modeline-buffer-file-name-style (quote buffer-name) t)
  '(doom-modeline-enable-word-count t t)
@@ -172,16 +198,16 @@
  '(ispell-really-hunspell t t)
  '(ispell-silently-savep t t)
  '(org-agenda-files nil)
- '(org-agenda-tags-column -100 t)
+ '(org-agenda-tags-column -100)
  '(org-tags-column -100)
  '(package-selected-packages
    (quote
-    (color-theme-sanityinc-tomorrow omnisharp solaire-mode solarized-theme htmlize doom-modeline neotree smartparens which-key company flycheck counsel ivy all-the-icons use-package)))
+    (dracula-theme shell-pop color-theme-sanityinc-tomorrow omnisharp solaire-mode solarized-theme htmlize doom-modeline neotree smartparens which-key company flycheck counsel ivy all-the-icons use-package)))
  '(pdf-view-display-size (quote fit-page))
  '(pdf-view-resize-factor 1.1)
  '(pdf-view-use-unicode-ligther nil)
  '(show-paren-delay 0)
- '(sp-escape-quotes-after-insert nil t)
+ '(sp-escape-quotes-after-insert nil)
  '(tooltip-mode -1))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

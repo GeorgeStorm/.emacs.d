@@ -20,8 +20,8 @@
 (global-set-key [(control right)] 'scroll-left-1)
 
 ;; zoom in/out like we do everywhere else.
-(global-set-key (kbd "C-+") 'text-scale-increase)
-(global-set-key (kbd "C-=") 'text-scale-decrease)
+(global-set-key (kbd "C-=") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
 (global-set-key (kbd "<C-wheel-down>") 'text-scale-decrease)
 (global-set-key (kbd "<C-wheel-up>") 'text-scale-increase)
 
@@ -35,6 +35,18 @@
 
 ;; Try new search function
 (global-set-key (kbd "C-s") 'swiper-isearch)
+
+;; Quicker find + replace binding
+(global-set-key (kbd "C-r") 'query-replace-regexp)
+
+;; Switch to buffer in new frame
+(global-set-key (kbd "C-x b") 'ido-switch-buffer-other-frame)
+
+;; Function keys
+;; File browser toggle
+(global-set-key [f8] 'neotree-toggle)
+;; Open Shell
+(global-set-key [f9] 'shell-pop)
 
 ;; Better paste behaviour?
 (setq select-active-regions nil)

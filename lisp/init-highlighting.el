@@ -43,6 +43,10 @@
   :diminish rainbow-mode
   :hook prog-mode)
 
+;; Remove trailing whitespace on file savex
+(add-hook 'before-save-hook
+          'delete-trailing-whitespace)
+
 (provide 'init-highlighting)
 
 ;;; init-highlighting.el ends here

@@ -13,7 +13,12 @@
   :mode ("\\.org\\'" . org-mode)
   :bind ("C-c a" . org-agenda)
   :config
-  (setq org-agenda-tags-column -100
+  (setq org-todo-keywords
+        '((sequence "TODO" "DOING" "|" "DONE"))
+        org-todo-keyword-faces
+        '(("TODO" . "orange") ("DOING" . "yellow") ("DONE" . "green"))
+
+        org-agenda-tags-column -100
         org-tags-column -100
         org-src-tab-acts-natively t
         org-src-fontify-natively t
@@ -25,8 +30,6 @@
         '(("d" "Simple agenda view"
            ((agenda "")
             (alltodo ""))))))
-
-(add-hook 'after-init-hook 'org-agenda-list)
 
 (use-package org-ref
   :after org

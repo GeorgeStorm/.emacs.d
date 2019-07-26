@@ -22,7 +22,8 @@
   :custom
   (flyspell-delay 1)
   (add-hook 'text-mode-hook 'flyspell-mode)
-  (add-hook 'prog-mode-hook #'flyspell-prog-mode))
+  (add-hook 'prog-mode-hook #'flyspell-prog-mode)
+  (add-hook 'flyspell-mode-hook 'flyspell-buffer))
 
 (provide 'init-flyspell)
 
