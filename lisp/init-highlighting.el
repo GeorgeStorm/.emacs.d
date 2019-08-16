@@ -43,17 +43,9 @@
   :diminish rainbow-mode
   :hook prog-mode)
 
-;; Colours words 
-(use-package rainbow-identifiers
-  :ensure t
-  :custom
-  (rainbow-identifiers-cie-l*a*b*-lightness 70)
-  (rainbow-identifiers-cie-l*a*b*-saturation 20)
-  (rainbow-identifiers-choose-face-function
-   #'rainbow-identifiers-cie-l*a*b*-choose-face)
-  :hook
-  (emacs-lisp-mode . rainbow-identifiers-mode) ; actually, turns it off
-  (prog-mode . rainbow-identifiers-mode))
+;; Remove trailing whitespace on file savex
+(add-hook 'before-save-hook
+          'delete-trailing-whitespace)
 
 (provide 'init-highlighting)
 

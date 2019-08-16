@@ -4,12 +4,21 @@
 
 ;;; Code:
 
+;; Allows export of orgmode files to html
+(use-package htmlize
+  :defer t)
+
 (use-package org
   :ensure t
   :mode ("\\.org\\'" . org-mode)
   :bind ("C-c a" . org-agenda)
   :config
-  (setq org-agenda-tags-column -100
+  (setq org-todo-keywords
+        '((sequence "TODO" "DOING" "|" "DONE" "POSTPONED"))
+        org-todo-keyword-faces
+        '(("TODO" . "orange") ("DOING" . "yellow") ("DONE" . "green") | ("POSTPONED" . "red"))
+
+        org-agenda-tags-column -100
         org-tags-column -100
         org-src-tab-acts-natively t
         org-src-fontify-natively t
@@ -28,6 +37,13 @@
                                  ("frame" "lines")))
 
 (add-hook 'after-init-hook 'org-agenda-list)
+;; babel
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((C . t)
+   (shell . t)
+   (python . t)
+   (sql . t)))
 
 (use-package org-ref
   :after org

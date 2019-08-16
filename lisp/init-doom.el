@@ -11,7 +11,8 @@
   :custom
   (doom-modeline-major-mode-icon t)
   (doom-modeline-buffer-file-name-style 'buffer-name)
-  (doom-modeline-icon t))
+  (doom-modeline-icon t)
+  (doom-modeline-enable-word-count t))
 	  
 (use-package doom-themes
 	:config
@@ -22,7 +23,7 @@
 
 	;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
 	;; may have their own settings.
-	(load-theme 'doom-vibrant t)
+	(load-theme 'doom-dracula t)
 
 	;; Enable flashing mode-line on errors
 	(doom-themes-visual-bell-config)

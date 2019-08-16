@@ -21,9 +21,9 @@
       gc-cons-percentage 0.6)
 (setq file-name-handler-alist-original file-name-handler-alist
       file-name-handler-alist nil)
-(add-hook 'after-init-hook
+(add-hook 'emacs-startup-hook
           `(lambda ()
-             (setq gc-cons-threshold 800000
+             (setq gc-cons-threshold 16777216
                    gc-cons-percentage 0.1)
              (setq file-name-handler-alist file-name-handler-alist-original)
              (makunbound 'file-name-handler-alist-original)
@@ -32,7 +32,7 @@
 ;; use-package setup
 (require 'cl)
 (require 'package)
-(setq package-archives
+(setq-default package-archives
       `(,@package-archives
         ("org" . "http://orgmode.org/elpa/")
          ("gnu" . "https://elpa.gnu.org/packages/")
@@ -72,14 +72,14 @@
       coding-system-for-write 'utf-8
       sentence-end-double-space nil
       frame-title-format '("%m " invocation-name "@" system-name)
-      initial-scratch-message nil
-      initial-buffer-choice "~/../../OneDrive/org/TODO.org")
+      initial-scratch-message nil)
 
 (setq-default fill-column 80 ;; Maximum line width.
               indent-tabs-mode nil ;; Use spaces instead of tabs.
               tab-width 2) ;; Size of tab in spaces
 
- (add-hook 'change-log-mode-hook 'turn-on-auto-fill)
+(add-hook 'text-mode-hook 'turn-on-auto-fill) ;; Enable auto-fill for text buffers
+
 
 ;; Set default font
 (set-face-attribute 'default nil :family "Consolas" :height 100 )
@@ -103,7 +103,7 @@
   :ensure t
   :config
   (setq recentf-max-saved-items 200
-        recentf-max-menu-items 15
+        recentf-max-menu-items 25
         recentf-auto-cleanup 'never)
   (recentf-mode +1))
 
@@ -114,14 +114,30 @@
   :ensure t
   :defer t)
 
-;; Allows export of orgmode files to html
-(use-package htmlize
-  :defer t)
+;; Used to track how often commands are used, to help improve effi by changing keymaps
+(use-package keyfreq)
+(keyfreq-mode 1)
+(keyfreq-autosave-mode 1)
+
+(use-package shell-pop  ;; Allows for small shell window to be made easily
+  :config
+  (setq shell-pop-full-span t ;; Shell windows spans entire emacs frame
+        shell-pop-shell-type (quote ("eshell" "*eshell*" (lambda nil (eshell
+                                                                      shell-pop-term-shell))))))
+  ;; Using eshell as the default (platform agnostic)
+(shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type)
 
 ;; Show warnings in a small window on opening
 (setq display-buffer-alist
   '(("[*]Warnings[*]" .
      (display-buffer-in-side-window . '((side . bottom))))))
+
+;; yasnippet
+(use-package yasnippet
+  :ensure t
+  :config
+  (yas-reload-all)
+  (yas-global-mode))
 
 ;; Save scratch file (notepad++ empty file replacement)
 (defun save-persistent-scratch ()
@@ -139,6 +155,19 @@
 (add-hook 'emacs-startup-hook 'load-persistent-scratch)
 (add-hook 'kill-emacs-hook 'save-persistent-scratch)
 (run-with-idle-timer 180 t 'save-persistent-scratch) ;; Save the scratch buffer every 5mins
+
+;; Insert date (for org notes files)
+(defun insert-date (prefix)
+    "Insert the current date. With prefix-argument, use ISO format. With
+   two prefix arguments, write out the day and month name."
+    (interactive "P")
+    (let ((format (cond
+                   ((not prefix) "%d.%m.%Y")
+                   ((equal prefix '(4)) "%Y-%m-%d")))
+          (system-time-locale "de_DE"))
+      (insert (format-time-string format))))
+
+(global-set-key (kbd "C-c d") 'insert-date)
 
 ;; Compilation flags
 (setq-default
@@ -162,6 +191,7 @@
  '(add-hook (quote prog-mode-hook) t)
  '(dashboard-startup-banner (quote logo) t)
  '(doom-modeline-buffer-file-name-style (quote buffer-name) t)
+ '(doom-modeline-enable-word-count t t)
  '(doom-modeline-icon t t)
  '(doom-modeline-major-mode-icon t t)
  '(flyspell-delay 1 t)
@@ -171,22 +201,17 @@
  '(ispell-really-aspell nil t)
  '(ispell-really-hunspell t t)
  '(ispell-silently-savep t t)
- '(org-agenda-files
-   (quote
-    ("~/OneDrive/Documents/PhD/georges-phd/Documents/org_thesis/thesis.org")))
- '(org-agenda-tags-column -100)
+ '(org-agenda-files nil)
+ '(org-agenda-tags-column -100 t)
  '(org-tags-column -100)
  '(package-selected-packages
    (quote
-    (omnisharp solaire-mode solarized-theme htmlize doom-modeline neotree smartparens which-key company flycheck counsel ivy all-the-icons use-package)))
+    (dracula-theme shell-pop color-theme-sanityinc-tomorrow omnisharp solaire-mode solarized-theme htmlize doom-modeline neotree smartparens which-key company flycheck counsel ivy all-the-icons use-package)))
  '(pdf-view-display-size (quote fit-page))
  '(pdf-view-resize-factor 1.1)
  '(pdf-view-use-unicode-ligther nil)
- '(rainbow-identifiers-choose-face-function (quote rainbow-identifiers-cie-l*a*b*-choose-face))
- '(rainbow-identifiers-cie-l*a*b*-lightness 70)
- '(rainbow-identifiers-cie-l*a*b*-saturation 20)
  '(show-paren-delay 0)
- '(sp-escape-quotes-after-insert nil)
+ '(sp-escape-quotes-after-insert nil t)
  '(tooltip-mode -1))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -207,6 +232,8 @@
 (require 'init-flycheck)
 ;; Spell checking
 (require 'init-flyspell)
+;; Shows git status in fringe
+(require 'init-git-diff)
 ;; Highlights parens etc
 (require 'init-highlighting)
 ;; Searching

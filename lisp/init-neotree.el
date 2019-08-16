@@ -12,7 +12,7 @@
   :config
   (setq neo-smart-open t)
   )
-(global-set-key [f8] 'neotree-toggle) ;; Bind to F8
+
 (provide 'init-neotree)
 
 ;;; init-neotree.el ends here

@@ -12,7 +12,7 @@
           (format "Emacs ready in %.2f seconds with %d garbage collections."
                   (float-time
                    (time-subtract after-init-time before-init-time)) gcs-done)))
-  (setq dashboard-items '((recents  . 15)))
+  (setq dashboard-items '((recents  . 25)))
   :init
     (add-hook 'after-init-hook 'dashboard-refresh-buffer)
     (add-hook 'dashboard-mode-hook 'my/dashboard-banner)
