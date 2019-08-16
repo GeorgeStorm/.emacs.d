@@ -16,17 +16,26 @@
         org-startup-truncated nil
         org-pretty-entities t
         org-pretty-entities-include-sub-superscripts t
-        org-use-sub-superscripts '{}))
+        org-use-sub-superscripts '{}
+        org-latex-listings 'minted
+        org-latex-packages-alist '(("" "minted"))
+        org-latex-caption-above nil
+        org-export-with-smart-quotes t
+        org-export-with-sub-superscripts nil))
+
+(setq org-latex-minted-options '(("breaklines" "true")
+                                 ("breakanywhere" "true")
+                                 ("frame" "lines")))
 
 (add-hook 'after-init-hook 'org-agenda-list)
 
 (use-package org-ref
   :after org
   :init (setq org-latex-pdf-process
-      '("pdflatex -interaction nonstopmode -output-directory %o %f"
+      '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
 	"bibtex %b"
-	"pdflatex -interaction nonstopmode -output-directory %o %f"
-	"pdflatex -interaction nonstopmode -output-directory %o %f")))
+	"pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+	"pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
 
 ;; see org-ref for use of these variables
 (setq org-ref-bibliography-notes "~/OneDrive/bibliography/notes.org"

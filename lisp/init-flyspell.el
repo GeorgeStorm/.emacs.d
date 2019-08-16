@@ -9,6 +9,7 @@
   :defer t
   :custom
   (ispell-program-name "hunspell")
+  (ispell-program-name "c:/hunspell/bin/hunspell.exe")
   (ispell-dictionary "en_GB")
   (ispell-really-aspell nil)
   (ispell-really-hunspell t)

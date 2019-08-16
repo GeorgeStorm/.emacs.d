@@ -75,10 +75,11 @@
       initial-scratch-message nil
       initial-buffer-choice "~/../../OneDrive/org/TODO.org")
 
-(setq-default fill-column 100 ;; Maximum line width.
+(setq-default fill-column 80 ;; Maximum line width.
               indent-tabs-mode nil ;; Use spaces instead of tabs.
-              tab-width 2 ;; Size of tab in spaces
-              auto-fill-function nil) ;; Auto fill is annoying
+              tab-width 2) ;; Size of tab in spaces
+
+ (add-hook 'change-log-mode-hook 'turn-on-auto-fill)
 
 ;; Set default font
 (set-face-attribute 'default nil :family "Consolas" :height 100 )
@@ -150,14 +151,14 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(TeX-PDF-mode t t)
- '(TeX-auto-save t t)
- '(TeX-byte-compile t t)
- '(TeX-clean-confirm nil t)
- '(TeX-master (quote dwim) t)
- '(TeX-parse-self t t)
- '(TeX-source-correlate-mode t t)
- '(TeX-view-program-selection (quote ((output-pdf "PDF Tools"))) t)
+ '(TeX-PDF-mode t)
+ '(TeX-auto-save t)
+ '(TeX-byte-compile t)
+ '(TeX-clean-confirm nil)
+ '(TeX-master (quote dwim))
+ '(TeX-parse-self t)
+ '(TeX-source-correlate-mode t)
+ '(TeX-view-program-selection (quote ((output-pdf "PDF Tools"))))
  '(add-hook (quote prog-mode-hook) t)
  '(dashboard-startup-banner (quote logo) t)
  '(doom-modeline-buffer-file-name-style (quote buffer-name) t)
@@ -166,13 +167,13 @@
  '(flyspell-delay 1 t)
  '(ispell-dictionary "en_GB" t)
  '(ispell-encoding8-command t t)
- '(ispell-program-name "hunspell" t)
+ '(ispell-program-name "c:/hunspell/bin/hunspell.exe" t)
  '(ispell-really-aspell nil t)
  '(ispell-really-hunspell t t)
  '(ispell-silently-savep t t)
  '(org-agenda-files
    (quote
-    ("c:/Users/gwaldie/OneDrive/org/TODO.org" "c:/Users/gwaldie/OneDrive/Documents/logbook.org" "c:/PhD/Thesis/Documents/_PhD_Thesis/thesis.org" "c:/Users/gwaldie/OneDrive/org/TODO_home.org" "c:/Users/gwaldie/OneDrive/org/general.org")))
+    ("~/OneDrive/Documents/PhD/georges-phd/Documents/org_thesis/thesis.org")))
  '(org-agenda-tags-column -100)
  '(org-tags-column -100)
  '(package-selected-packages
