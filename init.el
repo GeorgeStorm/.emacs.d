@@ -21,9 +21,9 @@
       gc-cons-percentage 0.6)
 (setq file-name-handler-alist-original file-name-handler-alist
       file-name-handler-alist nil)
-(add-hook 'after-init-hook
+(add-hook 'emacs-startup-hook
           `(lambda ()
-             (setq gc-cons-threshold 800000
+             (setq gc-cons-threshold 16777216
                    gc-cons-percentage 0.1)
              (setq file-name-handler-alist file-name-handler-alist-original)
              (makunbound 'file-name-handler-alist-original)
@@ -32,7 +32,7 @@
 ;; use-package setup
 (require 'cl)
 (require 'package)
-(setq package-archives
+(setq-default package-archives
       `(,@package-archives
         ("org" . "http://orgmode.org/elpa/")
          ("gnu" . "https://elpa.gnu.org/packages/")
@@ -132,6 +132,13 @@
   '(("[*]Warnings[*]" .
      (display-buffer-in-side-window . '((side . bottom))))))
 
+;; yasnippet
+(use-package yasnippet
+  :ensure t
+  :config
+  (yas-reload-all)
+  (yas-global-mode))
+
 ;; Save scratch file (notepad++ empty file replacement)
 (defun save-persistent-scratch ()
        (with-current-buffer (get-buffer-create "*scratch*")
@@ -198,7 +205,7 @@
  '(ispell-really-hunspell t t)
  '(ispell-silently-savep t t)
  '(org-agenda-files nil)
- '(org-agenda-tags-column -100)
+ '(org-agenda-tags-column -100 t)
  '(org-tags-column -100)
  '(package-selected-packages
    (quote
@@ -207,7 +214,7 @@
  '(pdf-view-resize-factor 1.1)
  '(pdf-view-use-unicode-ligther nil)
  '(show-paren-delay 0)
- '(sp-escape-quotes-after-insert nil)
+ '(sp-escape-quotes-after-insert nil t)
  '(tooltip-mode -1))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

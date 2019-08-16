@@ -12,6 +12,14 @@
         ivy-height 20
         ivy-count-format "%d/%d "))
 
+(use-package all-the-icons-ivy
+  :ensure t
+  :config
+  (setq all-the-icons-ivy-buffer-commands
+      '(counsel-switch-buffer ido-switch-buffer-other-frame))
+  (all-the-icons-ivy-setup))
+
+
 ;; Override the basic Emacs commands
 (use-package counsel
   :bind* ;; Simplified some common function keymaps
@@ -28,7 +36,7 @@
    ("<f2> i"  . counsel-info-lookup-symbol)
    ("<f2> u"  . counsel-unicode-char)
    ("C-c C-r" . ivy-resume))) ;; Resume last ivy-based completion
-   
+
 (provide 'init-ivy)
 
 ;;; init-ivy.el ends here

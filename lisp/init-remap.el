@@ -43,6 +43,8 @@
 (global-set-key (kbd "C-x b") 'ido-switch-buffer-other-frame)
 
 ;; Function keys
+;; Open new emacs frame
+(global-set-key [f7] 'make-frame)
 ;; File browser toggle
 (global-set-key [f8] 'neotree-toggle)
 ;; Open Shell

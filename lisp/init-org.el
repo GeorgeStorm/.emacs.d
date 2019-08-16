@@ -14,9 +14,9 @@
   :bind ("C-c a" . org-agenda)
   :config
   (setq org-todo-keywords
-        '((sequence "TODO" "DOING" "|" "DONE"))
+        '((sequence "TODO" "DOING" "|" "DONE" "POSTPONED"))
         org-todo-keyword-faces
-        '(("TODO" . "orange") ("DOING" . "yellow") ("DONE" . "green"))
+        '(("TODO" . "orange") ("DOING" . "yellow") ("DONE" . "green") | ("POSTPONED" . "red"))
 
         org-agenda-tags-column -100
         org-tags-column -100
@@ -30,6 +30,14 @@
         '(("d" "Simple agenda view"
            ((agenda "")
             (alltodo ""))))))
+
+;; babel
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((C . t)
+   (shell . t)
+   (python . t)
+   (sql . t)))
 
 (use-package org-ref
   :after org

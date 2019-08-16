@@ -10,6 +10,9 @@
   (setq company-idle-delay 0)
   :config
   (add-hook 'after-init-hook 'global-company-mode))
+
+(setq company-dabbrev-downcase nil)
+
 (provide 'init-company)
 
 ;;; init-company.el ends here
