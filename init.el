@@ -117,19 +117,10 @@
         recentf-auto-cleanup 'never)
   (recentf-mode +1))
 
-(use-package smart-mode-line) ;; Nicer looking modeline
-
 ;; Required for doom-themes
 (use-package all-the-icons
   :ensure t
   :defer t)
-
-;; yasnippet
-(use-package yasnippet
-  :ensure t
-  :config
-  (yas-reload-all)
-  (yas-global-mode))
 
 ;; Compilation flags
 (setq-default

@@ -14,7 +14,8 @@
   (magit-add-section-hook 'magit-status-sections-hook
                           'magit-insert-modules
                           'magit-insert-stashes
-                          'append))
+                          'append)
+  (setq magit-display-buffer-function 'magit-display-buffer-same-window-except-diff-v1))
 
 (provide 'init-magit)
 
