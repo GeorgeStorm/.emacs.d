@@ -11,17 +11,22 @@
 (use-package org
   :ensure t
   :mode ("\\.org\\'" . org-mode)
-  :bind ("C-c a" . org-agenda)
+  :bind (("C-c l" . org-store-link)
+  ("C-c C-l" . org-insert-link))
   :config
   (setq org-todo-keywords
         '((sequence "TODO" "DOING" "|" "DONE" "POSTPONED"))
         org-todo-keyword-faces
-        '(("TODO" . "orange") ("DOING" . "yellow") ("DONE" . "green") | ("POSTPONED" . "red"))
+        '(("TODO" .  "orange" )
+          ("DOING" .  "yellow" )
+          ("DONE" . "PaleGreen")
+          ("POSTPONED" .  "red"))
 
-        org-agenda-tags-column -100
-        org-tags-column -100
+        org-link-file-path-type 'relative
+        org-startup-indented t
         org-src-tab-acts-natively t
         org-src-fontify-natively t
+        org-fontify-done-headline t
         org-startup-truncated nil
         org-pretty-entities t
         org-pretty-entities-include-sub-superscripts t
@@ -37,6 +42,28 @@
                                  ("frame" "lines")))
 
 (add-hook 'after-init-hook 'org-agenda-list)
+(use-package org-sidebar)
+
+(custom-set-faces
+ '(org-done ((t (:foreground "PaleGreen"
+                 :weight normal
+                 :strike-through t))))
+ '(org-headline-done
+            ((((class color) (min-colors 16) (background dark))
+              (:strike-through t)))))
+
+;; Generic batch org to markdown converter
+(defun publish-dir-org ()
+  "Publish all org files in a directory"
+  (interactive)
+  (save-excursion
+    (mapc
+     (lambda (file)
+       (with-current-buffer
+       (find-file-noselect file)
+     (org-md-export-to-markdown)))
+       (file-expand-wildcards  "*.org"))))
+
 ;; babel
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -46,6 +73,8 @@
    (sql . t)))
 
 (use-package org-ref
+  :ensure t
+  :mode ("\\.org\\'" . org-mode)
   :after org
   :init (setq org-latex-pdf-process
       '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
@@ -65,9 +94,6 @@
       bibtex-autokey-titlewords 2
       bibtex-autokey-titlewords-stretch 1
       bibtex-autokey-titleword-length 5)
-
-(require 'org-ref-pdf)
-(require 'org-ref-url-utils)
 
 (provide 'init-org)
 

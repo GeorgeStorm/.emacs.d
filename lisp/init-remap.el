@@ -30,8 +30,7 @@
 (global-set-key (kbd "<C-next>") 'end-of-buffer)
 
 ;; Cycle through buffers with Ctrl-TAB/Ctrl-Shift-TAB
-(global-set-key [C-tab] 'next-buffer)
-(global-set-key [C-S-tab] 'previous-buffer)
+(global-set-key [C-tab] 'other-window)
 
 ;; Try new search function
 (global-set-key (kbd "C-s") 'swiper-isearch)

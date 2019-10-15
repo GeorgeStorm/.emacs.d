@@ -33,10 +33,8 @@
   :config (hes-mode))
 
 ;; Highlights current line
-(use-package hl-line
-  :hook
-  (prog-mode . hl-line-mode))
-
+(use-package hl-line)
+(global-hl-line-mode 1)
 ;; Colours background under hex colour codes
 (use-package rainbow-mode
   :ensure t
