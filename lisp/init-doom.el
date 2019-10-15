@@ -12,14 +12,20 @@
   (doom-modeline-major-mode-icon t)
   (doom-modeline-buffer-file-name-style 'buffer-name)
   (doom-modeline-icon t)
-  (doom-modeline-enable-word-count t))
-	  
+  (doom-modeline-enable-word-count t)
+  (doom-modeline-major-mode-color-icon t)
+  (doom-modeline-buffer-state-icon t)
+  (doom-modeline-buffer-modification-icon t)
+  (doom-modeline-buffer-encoding nil)
+  (doom-modeline-indent-info nil))
+
 (use-package doom-themes
 	:config
 
 	;; Global settings (defaults)
-	(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-		  doom-themes-enable-italic t) ; if nil, italics is universally disabled
+	(setq doom-themes-enable-bold nil    ; if nil, bold is universally disabled
+		    doom-themes-enable-italic t ; if nil, italics is universally disabled
+        doom-dracula-brighter-modeline t)
 
 	;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
 	;; may have their own settings.
@@ -32,7 +38,8 @@
 	(doom-themes-neotree-config)
 
 	;; Corrects (and improves) org-mode's native fontification.
-	(doom-themes-org-config))
+	;;(doom-themes-org-config)
+  )
 
 (provide 'init-doom)
 

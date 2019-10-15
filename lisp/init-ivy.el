@@ -10,7 +10,15 @@
   (setq ivy-use-virtual-buffers t
         enable-recursive-minibuffers t
         ivy-height 20
-        ivy-count-format "%d/%d "))
+        ivy-count-format "%d/%d "
+        ;; does not count candidates
+        ivy-count-format ""
+        ;; no regexp by default
+        ivy-initial-inputs-alist nil
+        ;; configure regexp engine.
+        ivy-re-builders-alist
+	      ;; allow input not in order
+        '((t   . ivy--regex-ignore-order))))
 
 (use-package all-the-icons-ivy
   :ensure t
