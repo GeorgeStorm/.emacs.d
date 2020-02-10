@@ -11,12 +11,6 @@
   :config
   (setq warning-suppress-types '((python)
                                  (emacs))))
-  
-(use-package elpy
-  :init (with-eval-after-load 'python (elpy-enable))
-  :config
-  (progn
-    (setq elpy-rpc-backend "jedi")))
 
 (provide 'init-python)
 

@@ -10,7 +10,7 @@
   (after-init . doom-modeline-init)
   :custom
   (doom-modeline-major-mode-icon t)
-  (doom-modeline-buffer-file-name-style 'buffer-name)
+  (doom-modeline-buffer-file-name-style 'truncate-from-project)
   (doom-modeline-icon t)
   (doom-modeline-enable-word-count t)
   (doom-modeline-major-mode-color-icon t)
@@ -25,7 +25,7 @@
 	;; Global settings (defaults)
 	(setq doom-themes-enable-bold nil    ; if nil, bold is universally disabled
 		    doom-themes-enable-italic t ; if nil, italics is universally disabled
-        doom-dracula-brighter-modeline t)
+        )
 
 	;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
 	;; may have their own settings.
@@ -35,10 +35,14 @@
 	(doom-themes-visual-bell-config)
 
 	;; Enable custom neotree theme (all-the-icons must be installed!)
-	(doom-themes-neotree-config)
+	;;(doom-themes-neotree-config)
+
+  ;; Enable custom treemacs theme
+  (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
+  (doom-themes-treemacs-config)
 
 	;; Corrects (and improves) org-mode's native fontification.
-	;;(doom-themes-org-config)
+	(doom-themes-org-config)
   )
 
 (provide 'init-doom)
