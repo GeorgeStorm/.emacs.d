@@ -40,7 +40,26 @@
 
 (add-hook 'emacs-startup-hook 'load-persistent-scratch)
 (add-hook 'kill-emacs-hook 'save-persistent-scratch)
-(run-with-idle-timer 180 t 'save-persistent-scratch) ;; Save the scratch buffer every 5mins
+
+(defun magit-auto-refresh ()
+    (dolist (buf (buffer-list))
+  (with-current-buffer buf
+    (when (derived-mode-p 'magit-status-mode)
+      (get-buffer buf)
+      (magit-refresh)))))
+
+(defvar auto-tasks-timer nil)
+(defun auto-tasks()
+  ;;(message "Calling auto-tasks at (%s)" (current-time-string)
+  (when (timerp auto-tasks-timer)
+    (cancel-timer auto-tasks-timer))
+  (setq auto-tasks-timer
+        (run-with-idle-timer 5 nil 'save-persistent-scratch)))
+
+(run-with-idle-timer 60 t 'magit-auto-refresh)
+(run-with-idle-timer 60 t 'save-persistent-scratch)
+
+;;(run-with-timer 60 60 'auto-tasks) ;;Refresh magit status and save scratch buffer every minute.
 
 ;; Insert date (for org notes files)
 (defun insert-date ()
@@ -51,6 +70,17 @@
 
 ;; Use stackoverflow etc within emacs
 (use-package howdoyou)
+
+(use-package restclient
+    :ensure t
+    :mode (("\\.http\\'" . restclient-mode)))
+
+(use-package prescient)
+(prescient-persist-mode t)
+(use-package ivy-prescient)
+(ivy-prescient-mode t)
+(use-package company-prescient)
+(company-prescient-mode t)
 
 (provide 'init-random)
 

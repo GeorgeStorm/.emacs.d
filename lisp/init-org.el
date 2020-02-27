@@ -12,7 +12,9 @@
   :ensure t
   :mode ("\\.org\\'" . org-mode)
   :bind (("C-c l" . org-store-link)
-  ("C-c C-l" . org-insert-link))
+         ("C-c C-l" . org-insert-link)
+         ("C-c a" . org-agenda)
+         ("C-c c" . org-capture))
   :config
   (setq org-todo-keywords
         '((sequence "TODO" "DOING" "|" "DONE" "POSTPONED"))
@@ -35,7 +37,10 @@
         org-latex-packages-alist '(("" "minted"))
         org-latex-caption-above nil
         org-export-with-smart-quotes t
-        org-export-with-sub-superscripts nil))
+        org-export-with-sub-superscripts nil
+        org-hide-emphasis-markers t
+        org-hide-leading-stars t
+        org-pretty-entities t))
 
 (setq org-latex-minted-options '(("breaklines" "true")
                                  ("breakanywhere" "true")
@@ -45,12 +50,10 @@
 (use-package org-sidebar)
 
 (custom-set-faces
- '(org-done ((t (:foreground "PaleGreen"
-                 :weight normal
-                 :strike-through t))))
  '(org-headline-done
             ((((class color) (min-colors 16) (background dark))
-              (:strike-through t)))))
+              (:strike-through t))))
+ '(org-headline-done ((t (:foreground "#6272b2" :strike-through t)))))
 
 ;; Generic batch org to markdown converter
 (defun publish-dir-org ()
@@ -64,13 +67,16 @@
      (org-md-export-to-markdown)))
        (file-expand-wildcards  "*.org"))))
 
+(use-package org-sidebar)
+
 ;; babel
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((C . t)
    (shell . t)
    (python . t)
-   (sql . t)))
+   (sql . t)
+   (js . t)))
 
 (use-package org-ref
   :ensure t
@@ -94,6 +100,10 @@
       bibtex-autokey-titlewords 2
       bibtex-autokey-titlewords-stretch 1
       bibtex-autokey-titleword-length 5)
+
+;; Monospaced fonts for src blocks and tables in org-mode
+(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-block nil :inherit 'fixed-pitch)
 
 (provide 'init-org)
 

@@ -1,0 +1,1 @@
+("c:/Users/Georg/OneDrive/Documents/PhD/georges-phd/" "~/.emacs.d/")
