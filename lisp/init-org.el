@@ -45,8 +45,6 @@
 (setq org-latex-minted-options '(("breaklines" "true")
                                  ("breakanywhere" "true")
                                  ("frame" "lines")))
-
-(add-hook 'after-init-hook 'org-agenda-list)
 (use-package org-sidebar)
 
 (custom-set-faces
