@@ -22,6 +22,12 @@
 (global-set-key (kbd "<C-prior>") 'beginning-of-buffer)
 (global-set-key (kbd "<C-next>") 'end-of-buffer)
 
+;; move between frames.
+(global-set-key (kbd "C-x <up>") 'windmove-up)
+(global-set-key (kbd "C-x <down>") 'windmove-down)
+(global-set-key (kbd "C-x <left>") 'windmove-left)
+(global-set-key (kbd "C-x <right>") 'windmove-right)
+
 ;; Cycle through buffers with Ctrl-TAB/Ctrl-Shift-TAB
 (global-set-key [C-tab] 'other-window)
 

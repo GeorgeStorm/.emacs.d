@@ -10,9 +10,9 @@
 (unless (server-running-p)
   (cond
    ((eq system-type 'windows-nt)
-    (setq server-auth-dir "~\\.emacs.d\\server\\"))
+    (setq server-auth-dir "~\\.config\\emacs\\server\\"))
    ((eq system-type 'gnu/linux)
-    (setq server-auth-dir "~/.emacs.d/server/")))
+    (setq server-auth-dir "~/.config/emacs/server/")))
   (setq server-name "emacs-server-file")
   (server-start))
 
@@ -58,8 +58,8 @@
       vc-follow-symlinks t
       doc-view-continuous t ;; At page edge goto next/previous.
       echo-keystrokes 0.1
-      backup-directory-alist `(("." . "~/.emacs.d/backups"))
-      auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t))
+      backup-directory-alist `(("." . "~/.config/emacs/backups"))
+      auto-save-file-name-transforms '((".*" "~/.config/emacs/auto-save-list/" t))
       inhibit-startup-screen t
       ring-bell-function 'ignore ;; Silent bell on mistakes
       coding-system-for-read 'utf-8
@@ -101,7 +101,6 @@
 (menu-bar-mode -1) ;; Disable menu
 (tooltip-mode -1) ;; Disable tooltips
 (fset 'yes-or-no-p 'y-or-n-p) ;; Only required to type y/n instead of yes/no
-(global-display-line-numbers-mode t ) ;; Display line numbers
 (desktop-save-mode 1) ;; Save previous buffers/frames
 (display-time-mode 0) ;; Do/do not display the time in the modeline
 (global-auto-revert-mode t) ;; Automatically update buffers if changes on disk
@@ -180,7 +179,7 @@
  '(pdf-view-resize-factor 1.1)
  '(pdf-view-use-unicode-ligther nil)
  '(show-paren-delay 0)
- '(sp-escape-quotes-after-insert nil)
+ '(sp-escape-quotes-after-insert nil t)
  '(tooltip-mode -1))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -217,7 +216,7 @@
 ;; Searching
 (require 'init-ivy)
 ;; Latex/PDF mode
-;;(require 'init-latex)
+(require 'init-latex)
 ;; GIT in emacs
 (require 'init-magit)
 ;; Markdown mode
