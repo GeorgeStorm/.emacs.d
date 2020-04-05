@@ -7,12 +7,6 @@
 
 ;; Save scratch file (notepad++ empty file replacement)
 
-
-;; Used to track how often commands are used, to help improve effi by changing keymaps
-(use-package keyfreq)
-(keyfreq-mode 1)
-(keyfreq-autosave-mode 1)
-
 (use-package shell-pop  ;; Allows for small shell window to be made easily
   :config
   (setq shell-pop-full-span t ;; Shell windows spans entire emacs frame
@@ -20,6 +14,10 @@
                                                                       shell-pop-term-shell))))))
   ;; Using eshell as the default (platform agnostic)
 (shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type)
+
+(use-package dimmer)
+ (dimmer-configure-which-key)
+ (dimmer-mode t)
 
 ;; Show warnings in a small window on opening
 (setq display-buffer-alist
@@ -62,18 +60,19 @@
 ;;(run-with-timer 60 60 'auto-tasks) ;;Refresh magit status and save scratch buffer every minute.
 
 ;; Insert date (for org notes files)
-(defun insert-date ()
+(defun insert-day ()
    (interactive)
-   (insert (format-time-string "%d.%m.%Y, %A")))
+   (insert (format-time-string "%Y.%m.%d, %A")))
+(defun insert-month ()
+   (interactive)
+   (insert (format-time-string "%Y.%m, %B")))
+(defun insert-year ()
+   (interactive)
+   (insert (format-time-string "%Y")))
 
-(global-set-key (kbd "C-c d") 'insert-date)
-
-;; Use stackoverflow etc within emacs
-(use-package howdoyou)
-
-(use-package restclient
-    :ensure t
-    :mode (("\\.http\\'" . restclient-mode)))
+(global-set-key (kbd "C-c d") 'insert-day)
+(global-set-key (kbd "C-c m") 'insert-month)
+(global-set-key (kbd "C-c y") 'insert-year)
 
 (use-package prescient)
 (prescient-persist-mode t)

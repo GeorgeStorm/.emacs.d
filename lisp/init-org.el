@@ -81,10 +81,10 @@
   :mode ("\\.org\\'" . org-mode)
   :after org
   :init (setq org-latex-pdf-process
-      '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+      '("pdflatex -interaction nonstopmode -output-directory %o %f"
 	"bibtex %b"
-	"pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-	"pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
+	"pdflatex -interaction nonstopmode -output-directory %o %f"
+	"pdflatex -interaction nonstopmode -output-directory %o %f")))
 
 ;; see org-ref for use of these variables
 (setq org-ref-bibliography-notes "~/OneDrive/bibliography/notes.org"
