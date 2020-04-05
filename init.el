@@ -6,6 +6,7 @@
 ;;; Code:
 
 ;; Starting emacs server if one not already running
+;; Set EMACS_SERVER_FILE to "C:\Users\Georg\AppData\Roaming\.emacs.d\server"
 (require 'server)
 (unless (server-running-p)
   (cond
